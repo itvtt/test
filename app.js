@@ -9,6 +9,9 @@ const app = express();
 // const router = express.Router();
 
 app.use(express.json());
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 
 // app.use([loginRouter,postsRouter,commentsRouter,likeRouter]);
 
