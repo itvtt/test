@@ -26,7 +26,7 @@ body {
   text-align: justify;
   transform-origin: 50% 100%;
   transform: rotateX(20deg);
-  animation: crawl-animation 50s linear infinite; /* 애니메이션 반복 */
+  animation: crawl-animation 80s linear infinite; /* 애니메이션 반복 */
 }
 
 /* 제목 섹션 설정 */
@@ -60,7 +60,7 @@ body {
   }
   100% {
     top: -550vh; /* 화면을 벗어날 만큼 충분히 더 이동 */
-    transform: rotateX(25deg) translateZ(-300px);
+    transform: rotateX(25deg) translateZ(-100px);
   }
 }
 
