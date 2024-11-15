@@ -11,7 +11,7 @@ const router = express.Router();
 app.use(express.json());
 
 // app.use([loginRouter,postsRouter,commentsRouter,likeRouter]);
-
+console.log("gd")
 app.listen(8080, () => {
   console.log("서버가 요청을 받을 준비가 됐어요");
 });
