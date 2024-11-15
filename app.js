@@ -12,8 +12,10 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
+  res.send('Hello, World!');
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
