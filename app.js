@@ -1,16 +1,17 @@
 const express = require("express");
 const path = require('path'); 
+const app = express();
 // const jwt = require("jsonwebtoken");
 // const { Users } = require("./models");
-const app = express();
+
 // const loginRouter = require("./routes/signup");
 // const postsRouter = require("./routes/posts");
 // const commentsRouter = require("./routes/comments");
 // const likeRouter = require("./routes/like");
 // const router = express.Router();
 
-app.use(express.json());
-
+// app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   // res.send('Hello, World!');
