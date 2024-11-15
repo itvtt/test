@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path'); 
 // const jwt = require("jsonwebtoken");
 // const { Users } = require("./models");
 const app = express();
@@ -12,8 +13,8 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
-  // res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // res.send('Hello, World!');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 
