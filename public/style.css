@@ -60,7 +60,7 @@ body {
   }
   100% {
     top: -550vh; /* 화면을 벗어날 만큼 충분히 더 이동 */
-    transform: rotateX(25deg) translateZ(-1000px);
+    transform: rotateX(25deg) translateZ(-500px);
   }
 }
 
