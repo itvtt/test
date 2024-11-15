@@ -6,12 +6,13 @@ const app = express();
 // const postsRouter = require("./routes/posts");
 // const commentsRouter = require("./routes/comments");
 // const likeRouter = require("./routes/like");
-const router = express.Router();
+// const router = express.Router();
 
 app.use(express.json());
 
 // app.use([loginRouter,postsRouter,commentsRouter,likeRouter]);
-console.log("gd")
+
 app.listen(8080, () => {
   console.log("서버가 요청을 받을 준비가 됐어요");
+  console.log("gd")
 });
