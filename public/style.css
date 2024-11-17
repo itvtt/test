@@ -1,68 +1,46 @@
-/* 전체 배경과 텍스트 색상 설정 */
 body {
-  margin: 0;
-  padding: 0;
-  background-color: black;
-  color: #feda4a; /* 스타워즈 노란색 */
-  font-family: 'Arial', sans-serif;
-  overflow: hidden;
-  perspective: 400px;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    background: black;
+    color: #ffe81f;
 }
 
-/* 오프닝 텍스트 컨테이너 */
-.star-wars-intro {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  overflow: hidden;
+.star-wars {
+    position: relative;
+    height: 100vh;
+    perspective: 400px;
+    overflow: hidden;
 }
 
 .crawl {
-  position: absolute;
-  top: 100vh;
-  width: 60%;
-  text-align: justify;
-  transform-origin: 50% 100%;
-  transform: rotateX(20deg);
-  animation: crawl-animation 80s linear infinite; /* 애니메이션 반복 */
+    position: absolute;
+    top: 100vh;
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+    font-size: 20px;
+    transform-origin: 50% 100%;
+    animation: crawl 60s linear infinite;
 }
 
-/* 제목 섹션 설정 */
 .title {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.title p {
-  font-size: 1.5em;
-  margin: 0;
+    text-align: center;
+    margin-bottom: 100px;
 }
 
 .title h1 {
-  font-size: 3em;
-  margin: 0;
+    font-size: 40px;
+    margin: 10px 0;
 }
 
-/* 텍스트 설정 */
-.crawl p {
-  font-size: 1.2em;
-  line-height: 1.5em;
-  margin: 0 0 20px;
+@keyframes crawl {
+    0% {
+        top: 100vh;
+        transform: rotateX(20deg) translateZ(0);
+    }
+    100% {
+        top: -200vh;
+        transform: rotateX(25deg) translateZ(-1000px);
+    }
 }
-
-/* 텍스트가 점점 작아지며 위로 올라가는 애니메이션 */
-@keyframes crawl-animation {
-  0% {
-    top: 100vh;
-    transform: rotateX(20deg) translateZ(0);
-  }
-  100% {
-    top: -550vh; /* 화면을 벗어날 만큼 충분히 더 이동 */
-    transform: rotateX(25deg) translateZ(-100px);
-  }
-}
-
-
-/* .. */
