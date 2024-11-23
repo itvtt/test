@@ -233,4 +233,6 @@ def delete_post(post_id):
     return redirect("/")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+     port = int(os.getenv("PORT", 8080))
+    # 0.0.0.0에 바인딩하여 외부에서 접근 가능하게 설정
+    app.run(host="0.0.0.0", port=port, debug=True)
