@@ -3,6 +3,12 @@ import psycopg2
 import os
 from datetime import datetime
 
+# 환경변수 읽기
+host = os.getenv("host")
+user = os.getenv("user")
+password= os.getenv("password")
+database = os.getenv("database")
+
 app = Flask(__name__)
 
 # PostgreSQL 연결 설정
