@@ -1,22 +1,5 @@
 {
-  "name": "homework4",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1",
-    "joi": "^17.6.2",
-    "jsonwebtoken": "^8.5.1",
-    "mysql2": "^2.3.3",
-    "sequelize": "^6.25.0"
-  },
-  "devDependencies": {
-    "sequelize-cli": "^6.5.1"
+    "jodit": "^4.2.43"
   }
 }
