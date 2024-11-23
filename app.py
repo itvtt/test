@@ -17,11 +17,10 @@ db = psycopg2.connect(
     user=user,  # PostgreSQL 사용자 이름
     password=password,  # PostgreSQL 비밀번호
     database=database,  # 데이터베이스 이름
-    port=5432  # PostgreSQL 기본 포트 (필요 시 변경 가능)
 )
 
 
-username = os.getlogin()  # 현재 Windows 사용자 이름 가져오기
+username = os.getenv("USER") or os.getenv("USERNAME") or "default_user"
 print(username)
 
 
@@ -148,7 +147,7 @@ def submit():
     content = request.form["content"]
     category1 = request.form["category1"]
     category2 = request.form["category2"]
-    author = os.getlogin()  # 현재 Windows 사용자 이름 가져오기
+    author = username  # 현재 Windows 사용자 이름 가져오기
 
     cursor = db.cursor()
     cursor.execute("""
@@ -193,7 +192,7 @@ def edit_post(post_id):
         content = request.form["content"]
         category1 = request.form["category1"]
         category2 = request.form["category2"]
-        updated_by = os.getlogin()  # 현재 사용자 이름 가져오기
+        updated_by = username  # 현재 사용자 이름 가져오기
 
         cursor.execute("""
             UPDATE posts
@@ -221,7 +220,7 @@ def edit_post(post_id):
 def delete_post(post_id):
     cursor = db.cursor()
     deleted_at = datetime.now()  # 현재 시간
-    deleted_by = os.getlogin()  # 현재 시스템 사용자 이름
+    deleted_by = username # 현재 시스템 사용자 이름
 
     cursor.execute("""
         UPDATE posts
