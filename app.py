@@ -1,17 +1,17 @@
 from flask import Flask, request, render_template, redirect, url_for
-import pymysql
+import psycopg2
 import os
 from datetime import datetime
 
 app = Flask(__name__)
 
-# MySQL 연결 설정
-db = pymysql.connect(
-    host="localhost",
-    user="root",
-    password="1234",
-    database="imp_db",
-    charset="utf8mb4"
+# PostgreSQL 연결 설정
+db = psycopg2.connect(
+    host=host,
+    user=user,  # PostgreSQL 사용자 이름
+    password=password,  # PostgreSQL 비밀번호
+    database=database,  # 데이터베이스 이름
+    port=5432  # PostgreSQL 기본 포트 (필요 시 변경 가능)
 )
 
 
