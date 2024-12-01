@@ -1,6 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for
 import psycopg2
-import os
 from datetime import datetime
 
 # 환경변수 읽기
@@ -20,7 +19,7 @@ db = psycopg2.connect(
 )
 
 
-username = os.getenv("USER") or os.getenv("USERNAME") or "default_user"
+username = os.getenv("USERNAME") or "default_user"
 print(username)
 
 
