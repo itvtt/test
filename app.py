@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for
 import psycopg2
 from datetime import datetime
+import os
 
 # 환경변수 읽기
 host = os.getenv("host")
