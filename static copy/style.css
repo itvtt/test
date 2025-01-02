@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* 전체 페이지를 한 칸으로 설정 */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    text-align: center;
+}
+/* background: linear-gradient(180deg, #0066cc 0%, #ffffff 100%); */
+#index-container {
+    font-family: 'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size:  20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #F5F5F7 0%, #F5F5F7 100%);
+    color: rgb(0, 0, 0);
+}
+
+#index-container header {
+    background-color: transparent;
+    padding: 10px;
+}
+
+#index-container .top-nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 20px;
+    font-family: 'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-decoration: none solid rgba(0, 0, 0, 0.8)
+}
+.tag.new {
+    color:  #B64400; /* 빨간색으로 표시 */
+    font-weight: bold; /* 강조 */
+}
+
+#index-container .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 30px;
+}
+
+#index-container .menu li {
+    cursor: pointer;
+}
+
+
+/* 드롭다운 스타일 */
+#index-container .dropdown {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 90%;
+    padding: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, padding 0.3s ease;
+    color: black; /* 텍스트 색상 설정 */
+}
+
+#index-container .dropdown.show {
+    transform: translateX(-50%) scaleY(1);
+    padding: 20px;
+}
+
+#index-container .dropdown .item {
+    text-align: center;
+    width: 100px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    color: black; /* 텍스트 색상 설정 */
+}
+
+#index-container .dropdown .item.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#index-container .dropdown .item img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+/* 텍스트 스타일 */
+#index-container .dropdown .item p {
+    font-size: 14px;
+    margin: 0;
+    color: black; /* 텍스트 색상을 명확히 설정 */
+}
+
+/* 콘텐츠 영역 */
+#index-container #content-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#index-container #red-bordered-area {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 2px solid red; /* 빨간색 테두리 */
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-height: 200px; /* 최소 높이 설정 */
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin-right: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+.close-btn:hover {
+    color: rgb(14, 46, 226);
+}

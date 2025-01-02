@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/jodit/jodit.min.css" />
+    <script src="/static/jodit/jodit.min.js"></script>
+    <title>{{ post[1] }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .categories1-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+      }
+      .categories1 {
+        padding: 0px 220px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .categories1 button {
+        padding: 10px 15px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .categories1 button:hover {
+        background-color: #0056b3;
+      }
+      .write-button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .write-button:hover {
+        background-color: #218838;
+      }
+      .container {
+        display: flex;
+        flex-direction: row;
+        margin: 20px;
+      }
+      .categories2 {
+        width: 100px;
+        padding: 10px;
+        border-right: 1px solid #ddd;
+        text-align: center;
+        background-color: #f9f9f9;
+        min-height: 100vh; /* 화면 전체 높이를 유지 */
+      }
+      .categories2 p {
+        text-align: center;
+        color: #777;
+        margin-top: 20px;
+      }
+      .categories2 button {
+        display: block;
+        margin: 5px 0;
+        padding: 10px;
+        width: 100%;
+        text-align: center;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .categories2 button:hover {
+        background-color: #0056b3;
+      }
+      .posts {
+        flex: 1;
+        padding: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        table-layout: fixed; /* 테이블 셀 너비 고정 */
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis; /* 내용이 길면 생략 부호(...) 추가 */
+        white-space: nowrap; /* 내용 줄바꿈 방지 */
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      tr {
+        cursor: pointer; /* 행에 마우스를 올리면 클릭 가능 */
+      }
+      tr:hover {
+        background-color: #f1f1f1; /* 행에 마우스를 올릴 때 강조 */
+      }
+      .post-container {
+        max-width: 100%;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+      }
+      .post-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .post-meta {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 20px;
+        text-align: center; /* 텍스트와 버튼을 중앙 정렬 */
+      }
+      .post-meta a,
+      .post-meta button {
+        display: inline-block;
+        margin: 5px; /* 버튼 간의 간격 추가 */
+        text-align: center;
+      }
+      .post-meta form {
+        display: inline; /* 폼도 버튼처럼 보이도록 설정 */
+      }
+      .post-content {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      .action-button,
+      .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+      .action-button:hover,
+      .back-button:hover {
+        background-color: #0056b3;
+      }
+      .delete-button {
+        background-color: #ff4d4d;
+        border: none;
+        cursor: pointer;
+      }
+      .delete-button:hover {
+        background-color: #cc0000;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <a href="/" style="text-decoration: none; color: inherit"
+          >ABS 어닐 백서 시스템</a
+        >
+      </h1>
+    </header>
+
+    <div class="post-container">
+      <div class="post-title">{{ post[1] }}</div>
+      <div class="popo">
+        작성자: {{ post[3] }} | 작성 시간: {{ post[4] }} {% if post[5] and
+        post[6] %} | 마지막 수정: {{ post[5] }} | 수정자: {{ post[6] }} {% endif
+        %} {% if post[7] and post[8] %} | 삭제 시간: {{ post[7] }} | 삭제자: {{
+        post[8] }} {% endif %}
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      </div>
+      <div class="post-meta">
+        <a
+          href="/?category1={{ category1 }}&category2={{ category2 }}"
+          class="back-button"
+          >목록</a
+        >
+        &nbsp&nbsp
+        <a href="/post/{{ post[0] }}/edit" class="action-button">수정</a>
+        &nbsp&nbsp
+        <form
+          <form
+          action="/post/{{ post[0] }}/delete"
+          method="POST"
+          onsubmit="return confirmDelete()"
+          style="display: inline"
+        >
+          <button type="submit" class="action-button delete-button">
+            삭제
+          </button>
+        </form>
+      </div>
+      <script>
+        // 삭제 확인 메시지
+        function confirmDelete() {
+          return confirm("정말 삭제하시겠습니까?");
+        }
+      </script>
+      <div class="post-content">{{ post[2] | safe }}</div>
+    </div>
+  </body>
+</html>

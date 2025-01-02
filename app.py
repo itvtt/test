@@ -1,3 +1,9 @@
+from flask import Flask, request, jsonify, render_template, send_from_directory
+import pymysql
+from datetime import datetime, timedelta
+import pytz
+import requests
+import subprocess
 from flask import Flask, request, render_template, redirect, url_for
 import psycopg2
 from psycopg2 import OperationalError
@@ -14,6 +20,7 @@ app = Flask(__name__)
 
 username = os.getenv("USERNAME") or "default_user"
 print(username)
+app = Flask(__name__)
 
 def get_db_connection():
     """데이터베이스 연결 생성"""
@@ -29,186 +36,131 @@ def get_db_connection():
         print(f"데이터베이스 연결 실패: {e}")
         raise
 
+
+# # MySQL 데이터베이스 연결 설정
+# def get_db_connection():
+#     return pymysql.connect(host='localhost',
+#                            user='root',
+#                            password='1234',
+#                            database='imp_db',
+#                            cursorclass=pymysql.cursors.DictCursor)
+
+def get_client_ip():
+    if request.headers.get('X-Forwarded-For'):
+        ip = request.headers.get('X-Forwarded-For').split(',')[0]
+    else:
+        ip = request.remote_addr
+    return ip
+
+# 타임존 설정
+seoul_tz = pytz.timezone('Asia/Seoul')
+
+
+
+
 @app.route("/")
-def index():
-    category1 = request.args.get("category1", "")  # URL에서 category1 가져오기
-    category2 = request.args.get("category2", "")  # URL에서 category2 가져오기
+def home():
+    return render_template("index.html")
 
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            if category1 and category2:
-                cursor.execute("""
-                    SELECT id, title, created_at, author, category1, category2
-                    FROM posts
-                    WHERE category1 = %s AND category2 = %s AND is_deleted = FALSE
-                    ORDER BY created_at DESC
-                """, (category1, category2))
-            elif category1:
-                cursor.execute("""
-                    SELECT id, title, created_at, author, category1, category2
-                    FROM posts
-                    WHERE category1 = %s AND is_deleted = FALSE
-                    ORDER BY created_at DESC
-                """, (category1,))
-            else:
-                cursor.execute("""
-                    SELECT id, title, created_at, author, category1, category2
-                    FROM posts WHERE is_deleted = FALSE
-                    ORDER BY created_at DESC
-                """)
+@app.route('/cal')
+def cal():
+    return render_template("cal.html")
 
-            posts = cursor.fetchall()
-            cursor.execute("SELECT DISTINCT category1 FROM posts WHERE is_deleted = FALSE")
-            categories1 = [row[0] for row in cursor.fetchall()]
+@app.route('/home')
+def homes():
+    return render_template("home.html")
 
-            categories2 = []
-            if category1:
-                cursor.execute("SELECT DISTINCT category2 FROM posts WHERE category1 = %s AND is_deleted = FALSE", (category1,))
-                categories2 = [row[0] for row in cursor.fetchall()]
+# 이벤트 추가
+@app.route('/events', methods=['POST'])
+def add_event():
+    data = request.json
 
-    return render_template(
-        "index.html",
-        posts=posts,
-        categories1=categories1,
-        categories2=categories2,
-        current_category1=category1,
-        current_category2=category2
+    start = datetime.strptime(data['start'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
+    end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
+    cate = data.get('cate', '기타')
+    text = data.get('text', '')
+    ip_address = get_client_ip()  # IP 주소 가져오기
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO events (title, start, end, cate, text, created_ip) VALUES (%s, %s, %s, %s, %s, %s)",
+        (data['title'], start, end, cate, text, ip_address)  # created_ip와 updated_ip에 IP 저장
     )
+    conn.commit()
+    conn.close()
+    return jsonify({'status': 'Event added successfully', 'ip': ip_address})
 
-@app.route("/filter/<category1>")
-def filter_by_category1(category1):
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            cursor.execute("""
-                SELECT id, title, created_at, author, category1, category2
-                FROM posts
-                WHERE category1 = %s AND is_deleted = FALSE
-                ORDER BY created_at DESC
-            """, (category1,))
-            posts = cursor.fetchall()
 
-            cursor.execute("SELECT DISTINCT category2 FROM posts WHERE category1 = %s AND is_deleted = FALSE", (category1,))
-            categories2 = [row[0] for row in cursor.fetchall()]
+# 이벤트 수정
+@app.route('/events/<int:event_id>', methods=['PUT'])
+def update_event(event_id):
+    data = request.json
 
-            cursor.execute("SELECT DISTINCT category1 FROM posts WHERE is_deleted = FALSE")
-            categories1 = [row[0] for row in cursor.fetchall()]
+    start = datetime.strptime(data['start'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
+    end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
+    cate = data.get('cate', '기타')
+    text = data.get('text', '')
+    ip_address = get_client_ip()  # IP 주소 가져오기
 
-    return render_template("index.html", posts=posts, categories1=categories1, current_category1=category1, categories2=categories2)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        UPDATE events
+        SET title = %s, start = %s, end = %s, cate = %s, text = %s, updated_ip = %s
+        WHERE id = %s
+        """,
+        (data['title'], start, end, cate, text, ip_address, event_id)  # updated_ip에 IP 저장
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({'status': 'Event updated successfully', 'ip': ip_address})
 
-@app.route("/filter/<category1>/<category2>")
-def filter_by_category1_and_category2(category1, category2):
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            cursor.execute("""
-                SELECT id, title, created_at, author, category1, category2
-                FROM posts
-                WHERE category1 = %s AND category2 = %s AND is_deleted = FALSE
-                ORDER BY created_at DESC
-            """, (category1, category2))
-            posts = cursor.fetchall()
 
-            cursor.execute("SELECT DISTINCT category2 FROM posts WHERE category1 = %s AND is_deleted = FALSE", (category1,))
-            categories2 = [row[0] for row in cursor.fetchall()]
+@app.route('/events', methods=['GET'])
+def get_events():
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-            cursor.execute("SELECT DISTINCT category1 FROM posts WHERE is_deleted = FALSE")
-            categories1 = [row[0] for row in cursor.fetchall()]
+    # events 테이블과 ip_table을 조인하여 이름을 가져옵니다.
+    cursor.execute("""
+        SELECT e.id, e.title, e.start, e.end, e.cate, e.text, 
+               e.created_ip, e.updated_ip,
+               ci.name AS created_by, ui.name AS updated_by
+        FROM events e
+        LEFT JOIN ip_table ci ON e.created_ip = ci.ip
+        LEFT JOIN ip_table ui ON e.updated_ip = ui.ip
+    """)
+    
+    events = cursor.fetchall()
+    conn.close()
 
-    return render_template("index.html", posts=posts, categories1=categories1, current_category1=category1, categories2=categories2, current_category2=category2)
+    for event in events:
+        event['start'] = event['start'].isoformat()
+        event['end'] = event['end'].isoformat()
+    
+    return jsonify(events)
 
-@app.route("/editor", methods=["GET"])
-def editor():
-    category1 = request.args.get("category1", "")
-    category2 = request.args.get("category2", "")
-    category_mapping = {
-        "AMAT-CENTURA": ["EFEM", "TM", "DPN", "RTP", "CSF"],
-        "AMAT-VANTAGE": ["EFEM", "RTP"],
-        "FTP": ["EFEM", "CH", "FPSU", "SM", "MPSU"],
-        "LSA": ["EFEM", "CH", "H/X", "TR"],
-        "HPA": ["EFEM", "CH", "H/X", "CSF"],
-        "문의": ["질문건의"],
-    }
-    return render_template("editor.html", category1=category1, category2=category2, category_mapping=category_mapping)
 
-@app.route("/submit", methods=["POST"])
-def submit():
-    title = request.form["title"]
-    content = request.form["content"]
-    category1 = request.form["category1"]
-    category2 = request.form["category2"]
-    author = username  # 현재 사용자 이름 가져오기
 
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            cursor.execute("""
-                INSERT INTO posts (title, content, category1, category2, author, created_at)
-                VALUES (%s, %s, %s, %s, %s, NOW())
-            """, (title, content, category1, category2, author))
-            db.commit()
-    return redirect("/")
 
-@app.route("/post/<int:post_id>")
-def post_detail(post_id):
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            cursor.execute("""
-                SELECT id, title, content, author, created_at, updated_at, updated_by, deleted_at, deleted_by, category1, category2
-                FROM posts
-                WHERE id = %s AND is_deleted = FALSE
-            """, (post_id,))
-            post = cursor.fetchone()
 
-    if not post:
-        return "게시글을 찾을 수 없습니다.", 404
+@app.route('/events/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM events WHERE id=%s", (event_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'status': 'Event deleted successfully'})
 
-    return render_template("post_detail.html", post=post)
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "ok"}), 200  # 정상 동작일 때 HTTP 200 반환
 
-@app.route("/post/<int:post_id>/edit", methods=["GET", "POST"])
-def edit_post(post_id):
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            if request.method == "POST":
-                title = request.form["title"]
-                content = request.form["content"]
-                category1 = request.form["category1"]
-                category2 = request.form["category2"]
-                updated_by = username
 
-                cursor.execute("""
-                    UPDATE posts
-                    SET title = %s, content = %s, category1 = %s, category2 = %s,
-                        updated_at = NOW(), updated_by = %s
-                    WHERE id = %s AND is_deleted = FALSE
-                """, (title, content, category1, category2, updated_by, post_id))
-                db.commit()
-                return redirect(url_for("post_detail", post_id=post_id))
-
-            cursor.execute("""
-                SELECT id, title, content, category1, category2
-                FROM posts WHERE id = %s AND is_deleted = FALSE
-            """, (post_id,))
-            post = cursor.fetchone()
-
-    if not post:
-        return "게시글을 찾을 수 없습니다.", 404
-
-    return render_template("edit_post.html", post=post)
-
-@app.route("/post/<int:post_id>/delete", methods=["POST"])
-def delete_post(post_id):
-    deleted_at = datetime.now()
-    deleted_by = username
-
-    with get_db_connection() as db:
-        with db.cursor() as cursor:
-            cursor.execute("""
-                UPDATE posts
-                SET is_deleted = TRUE, deleted_at = %s, deleted_by = %s
-                WHERE id = %s
-            """, (deleted_at, deleted_by, post_id))
-            db.commit()
-
-    return redirect("/")
-
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080))
-    app.run(host="0.0.0.0", port=port, debug=True)
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)

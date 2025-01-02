@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABS</title>
+    <link rel="stylesheet" href="/static/jodit/jodit.min.css" />
+    <script src="/static/jodit/jodit.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .categories1-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+      }
+      .categories1 {
+        padding: 0px 220px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .categories1 button {
+        padding: 10px 15px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .categories1 button:hover {
+        background-color: #0056b3;
+      }
+      .write-button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .write-button:hover {
+        background-color: #218838;
+      }
+      .container {
+        display: flex;
+        flex-direction: row;
+        margin: 20px;
+      }
+      .categories2 {
+        width: 100px;
+        padding: 10px;
+        border-right: 1px solid #ddd;
+        text-align: center;
+        background-color: #;
+        min-height: 100vh;
+      }
+      .categories2 p {
+        text-align: center;
+        color: #777;
+        margin-top: 20px;
+      }
+      .categories2 button {
+        display: block;
+        margin: 5px 0;
+        padding: 10px;
+        width: 100%;
+        text-align: center;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .categories2 button:hover {
+        background-color: #0056b3;
+      }
+      .posts {
+        flex: 1;
+        padding: 10px;
+      }
+      #title {
+        width: 100%;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        table-layout: fixed;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      tr {
+        cursor: pointer;
+      }
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+      #editor-container {
+        display: none;
+        width: 100%; /* 부모 컨테이너의 100%로 확장 */
+        min-height: 100vh; /* 화면 전체 높이 */
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-sizing: border-box; /* 패딩과 경계선을 포함한 크기 설정 */
+      }
+      
+      textarea#editor {
+        width: 100%;
+        min-height: 700px; /* 에디터 최소 높이 */
+        box-sizing: border-box; /* 패딩과 경계선을 포함한 크기 설정 */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <a href="/" style="text-decoration: none; color: inherit"
+          >ABS 어닐 백서 시스템</a
+        >
+      </h1>
+    </header>
+
+    <div class="categories1-wrapper">
+      <div class="categories1">
+        <button onclick="location.href='/'">전체</button>
+        {% for category1 in categories1 %}
+        <button onclick="location.href='/?category1={{ category1 }}'">
+          {{ category1 }}
+        </button>
+        {% endfor %}
+      </div>
+      <button class="write-button" onclick="showEditor()">글쓰기</button>
+    </div>
+
+    <div class="container">
+      <!-- 왼쪽 카테고리2 메뉴 -->
+      <div class="categories2">
+        {% if current_category1 %}
+        <button onclick="location.href='/?category1={{ current_category1 }}'">
+          전체
+        </button>
+        {% for category2 in categories2 %}
+        <button
+          onclick="location.href='/?category1={{ current_category1 }}&category2={{ category2 }}'"
+        >
+          {{ category2 }}
+        </button>
+        {% endfor %}
+        {% else %}
+        <p>카테고리2 없음</p>
+        {% endif %}
+      </div>
+
+      <!-- 리스트 영역 -->
+      <div id="list-view" class="posts active">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 3%">No</th>
+              <th style="width: 50%">제목</th>
+              <th style="width: 10%">카테고리1</th>
+              <th style="width: 10%">카테고리2</th>
+              <th style="width: 10%">작성시간</th>
+              <th style="width: 10%">작성자</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for post in posts %}
+            <tr
+              onclick="location.href='/post/{{ post[0] }}?category1={{ current_category1 }}&category2={{ current_category2 }}'"
+            >
+              <td>{{ post[0] }}</td>
+              <td>{{ post[1] }}</td>
+              <td>{{ post[4] }}</td>
+              <td>{{ post[5] }}</td>
+              <td>{{ post[2] }}</td>
+              <td>{{ post[3] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 글쓰기 에디터 -->
+      <div id="editor-container">
+        
+        <form action="/submit" method="POST">
+          <div id="cate">
+            <label for="category1">설비군:</label>
+            <select id="category1" name="category1" required>
+                <option value="">-- 선택 --</option>
+                <option value="AMAT-CENTURA" {% if category1 == "AMAT-CENTURA" %}selected{% endif %}>AMAT-CENTURA</option>
+                <option value="AMAT-VANTAGE" {% if category1 == "AMAT-VANTAGE" %}selected{% endif %}>AMAT-VANTAGE</option>
+                <option value="FTP" {% if category1 == "FTP" %}selected{% endif %}>FTP</option>
+                <option value="LSA" {% if category1 == "LSA" %}selected{% endif %}>LSA</option>
+                <option value="HPA" {% if category1 == "HPA" %}selected{% endif %}>HPA</option>
+                <option value="문의" {% if category1 == "문의" %}selected{% endif %}>문의</option>
+            </select>
+            <label for="category2" style="margin-left: 15px;">모듈:</label>
+            <select id="category2" name="category2" required>
+                <option value="">-- 선택 --</option>
+                {% if category1 %}
+                    {% for option in category_mapping[category1] %}
+                    <option value="{{ option }}" {% if category2 == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            <p style="margin-top: 10px; font-size: 12px; color: #777;">
+                애매하면 ETC로 설정하세요. 카테고리 추가 가능합니다.
+            </p>
+        </div>
+          <label for="title">제목:</label>
+          <input type="text" id="title" name="title" required />
+          <br />
+
+          <label for="content">내용:</label>
+          <textarea id="editor" name="content"></textarea>
+          <br />
+
+          <button type="submit">저장</button>
+        </form>
+      </div>
+    </div>
+
+    
+    <script>
+      const categoryMapping = {
+        "AMAT-CENTURA": ["EFEM", "TM", "DPN", "RTP", "CSF"],
+        "AMAT-VANTAGE": ["EFEM", "RTP"],
+        "FTP": ["EFEM", "CH", "FPSU", "SM", "MPSU"],
+        "LSA": ["EFEM", "CH", "H/X", "TR"],
+        "HPA": ["EFEM", "CH", "H/X", "CSF"],
+        "문의": ["질문", "건의"],
+      };
+      const category1Select = document.getElementById("category1");
+      const category2Select = document.getElementById("category2");
+
+      // Populate category2 based on category1
+      category1Select.addEventListener("change", function () {
+        const selectedCategory1 = this.value;
+        category2Select.innerHTML = '<option value="">-- 선택 --</option>';
+
+        if (selectedCategory1 && categoryMapping[selectedCategory1]) {
+          categoryMapping[selectedCategory1].forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            category2Select.appendChild(option);
+          });
+        }
+      });
+      const editor = new Jodit("#editor", {
+        uploader: {
+          insertImageAsBase64URI: true,
+        },
+        buttons: [
+          "bold",
+          "italic",
+          "underline",
+          "strikethrough",
+          "|",
+          "fontsize", // font 버튼 제거
+          "textColor",
+          "backgroundColor",
+          "|",
+          "file",
+          "image",
+          "link",
+          "|",
+          "alignLeft",
+          "alignCenter",
+          "alignRight",
+          "alignJustify",
+          "|",
+          "hr",
+          "table",
+          "|",
+          "undo",
+          "redo",
+          "|",
+          "fullsize",
+          "source",
+        ],
+        removeButtons: ["font"], // font 버튼 제거
+        styleValues: {
+          fontFamily: "Helvetica", // 기본 폰트를 Helvetica로 고정
+        },
+        defaultStyle: "font-family: Helvetica;", // 기본 폰트 설정
+        controls: {
+          textColor: {
+            iconURL: "/static/icon/textcolor.jpg", // 텍스트 색상 아이콘
+            popup: (editor, current, control, close) => {
+              const brushPopup = editor.options.controls.brush.popup(
+                editor,
+                current,
+                control,
+                close
+              );
+              // Text 탭 기본 활성화
+              const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+              if (tabs.length > 1) {
+                tabs[1].click(); // "Text" 탭 활성화
+              }
+              return brushPopup;
+            },
+            exec: (editor, event, control, close) => {
+              const value = editor.options.controls.brush.exec(
+                editor,
+                event,
+                control,
+                close
+              );
+              editor.s.applyStyle({ color: value });
+              return value;
+            },
+            tooltip: "텍스트 색상 변경",
+          },
+          backgroundColor: {
+            iconURL: "/static/icon/backcolor.jpg", // 배경 색상 아이콘
+            popup: (editor, current, control, close) => {
+              const brushPopup = editor.options.controls.brush.popup(
+                editor,
+                current,
+                control,
+                close
+              );
+
+              // Background 탭 기본 활성화
+              const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+              if (tabs.length > 0) {
+                tabs[0].click(); // "Background" 탭 활성화
+              }
+              return brushPopup;
+            },
+            exec: (editor, event, control, close) => {
+              const value = editor.options.controls.brush.exec(
+                editor,
+                event,
+                control,
+                close
+              );
+              editor.s.applyStyle({ backgroundColor: value });
+              return value;
+            },
+            tooltip: "배경 색상 변경",
+          },
+          alignLeft: {
+            icon: "left",
+            exec: (editor) => editor.execCommand("justifyLeft"),
+            tooltip: "왼쪽 정렬",
+          },
+          alignCenter: {
+            icon: "center",
+            exec: (editor) => editor.execCommand("justifyCenter"),
+            tooltip: "가운데 정렬",
+          },
+          alignRight: {
+            icon: "right",
+            exec: (editor) => editor.execCommand("justifyRight"),
+            tooltip: "오른쪽 정렬",
+          },
+          alignJustify: {
+            icon: "justify",
+            exec: (editor) => editor.execCommand("justifyFull"),
+            tooltip: "양쪽 정렬",
+          },
+          fontsize: {
+            icon: "fontsiz22e",
+            exec: (editor) => editor.execCommand("fontsize"),
+            tooltip: "글자 크기",
+          },
+        },
+        events: {
+          afterInsertNode: (node) => {
+            if (node.tagName === "TABLE") {
+              // 기본 스타일 적용
+              node.style.border = "1px solid black";
+              node.style.borderCollapse = "collapse";
+              node.style.tableLayout = "auto"; // 텍스트 내용에 따라 셀 크기 자동 조정
+
+              // 셀 스타일
+              Array.from(node.querySelectorAll("td, th")).forEach((cell) => {
+                cell.style.border = "1px solid black";
+                cell.style.padding = "8px";
+                cell.style.textAlign = "left";
+              });
+            }
+          },
+        },
+
+        height: 700, // 에디터 높이를 700px로 설정
+        width: "100%", // 부모 컨테이너의 100%에 맞춤
+        toolbarAdaptive: false, // 메뉴 축약 비활성화
+        toolbarSticky: true, // 툴바 고정
+      });
+
+      function showEditor() {
+        const category1 = "{{ current_category1 }}";
+        const category2 = "{{ current_category2 }}";
+      
+        document.getElementById("list-view").style.display = "none";
+        document.getElementById("editor-container").style.display = "block";
+      
+        // category1과 category2를 설정
+        const category1Select = document.getElementById("category1");
+        const category2Select = document.getElementById("category2");
+      
+        category1Select.value = category1;
+      
+        // category1 변경 시 category2 옵션 업데이트
+        category2Select.innerHTML = '<option value="">-- 선택 --</option>';
+        if (category1 && categoryMapping[category1]) {
+          categoryMapping[category1].forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            if (item === category2) {
+              option.selected = true;
+            }
+            category2Select.appendChild(option);
+          });
+        }
+      }
+      // 세부 내용을 표시하는 함수
+      function viewDetails(id, title, category1, category2, time, author) {
+        // 세부 내용을 동적으로 설정
+        document.getElementById("detail-title").innerText = title;
+        document.getElementById("detail-category1").innerText = category1;
+        document.getElementById("detail-category2").innerText = category2;
+        document.getElementById("detail-time").innerText = time;
+        document.getElementById("detail-author").innerText = author;
+        document.getElementById("detail-content").innerHTML = "글 내용은 서버에서 가져옵니다.";
+
+        // 목록을 숨기고 세부 내용을 표시
+        document.getElementById("list-view").classList.remove("active");
+        document.getElementById("details-view").classList.add("active");
+      }
+
+      // 목록으로 돌아가는 함수
+      function showList() {
+        // 세부 내용을 숨기고 목록을 다시 표시
+        document.getElementById("details-view").classList.remove("active");
+        document.getElementById("list-view").classList.add("active");
+      }
+    </script>
+  </body>
+</html>
