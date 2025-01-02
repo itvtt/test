@@ -52,6 +52,8 @@ def get_client_ip():
         ip = request.remote_addr
     return ip
 
+
+
 # 타임존 설정
 seoul_tz = pytz.timezone('Asia/Seoul')
 
@@ -80,7 +82,8 @@ def add_event():
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
-    ip_address = get_client_ip()  # IP 주소 가져오기
+    # ip_address = get_client_ip()  # IP 주소 가져오기
+    ip_address = request.remote_addr
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -103,8 +106,8 @@ def update_event(event_id):
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
-    ip_address = get_client_ip()  # IP 주소 가져오기
-
+    # ip_address = get_client_ip()  # IP 주소 가져오기
+    ip_address = request.remote_addr
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
