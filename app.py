@@ -76,7 +76,7 @@ def add_event():
     data = request.json
 
     start = datetime.strptime(data['start'], '%Y-%m-%d').date()
-    end = datetime.strptime(data['endd'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
@@ -99,7 +99,7 @@ def update_event(event_id):
     data = request.json
 
     start = datetime.strptime(data['start'], '%Y-%m-%d').date()
-    end = datetime.strptime(data['endd'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
@@ -140,7 +140,7 @@ def get_events():
 
     for event in events:
         event['start'] = event['start'].isoformat()
-        event['endd'] = event['endd'].isoformat()
+        event['end'] = event['end'].isoformat()
     
     return jsonify(events)
 
