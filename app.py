@@ -76,7 +76,7 @@ def add_event():
     data = request.json
 
     start = datetime.strptime(data['start'], '%Y-%m-%d').date()
-    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['endd'], '%Y-%m-%d').date()
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
@@ -85,7 +85,7 @@ def add_event():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO events (title, start, end, cate, text, created_ip) VALUES (%s, %s, %s, %s, %s, %s)",
+        "INSERT INTO events (title, start, endd, cate, text, created_ip) VALUES (%s, %s, %s, %s, %s, %s)",
         (data['title'], start, end, cate, text, ip_address)  # created_ip와 updated_ip에 IP 저장
     )
     conn.commit()
@@ -99,7 +99,7 @@ def update_event(event_id):
     data = request.json
 
     start = datetime.strptime(data['start'], '%Y-%m-%d').date()
-    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['endd'], '%Y-%m-%d').date()
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
@@ -110,7 +110,7 @@ def update_event(event_id):
     cursor.execute(
         """
         UPDATE events
-        SET title = %s, start = %s, end = %s, cate = %s, text = %s, updated_ip = %s
+        SET title = %s, start = %s, endd = %s, cate = %s, text = %s, updated_ip = %s
         WHERE id = %s
         """,
         (data['title'], start, end, cate, text, ip_address, event_id)  # updated_ip에 IP 저장
@@ -127,7 +127,7 @@ def get_events():
 
     # events 테이블과 ip_table을 조인하여 이름을 가져옵니다.
     cursor.execute("""
-        SELECT e.id, e.title, e.start, e.end, e.cate, e.text, 
+        SELECT e.id, e.title, e.start, e.endd, e.cate, e.text, 
                e.created_ip, e.updated_ip,
                ci.name AS created_by, ui.name AS updated_by
         FROM events e
@@ -140,7 +140,7 @@ def get_events():
 
     for event in events:
         event['start'] = event['start'].isoformat()
-        event['end'] = event['end'].isoformat()
+        event['endd'] = event['endd'].isoformat()
     
     return jsonify(events)
 
