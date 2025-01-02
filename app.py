@@ -141,12 +141,16 @@ def get_events():
     events = cursor.fetchall()
     conn.close()
 
+    columns = [desc[0] for desc in cursor.description]
     result = []
+
     for event in events:
-        event_dict = dict(event)  # Convert row to dict
-        event_dict['start'] = datetime.strptime(event_dict['start'], "%Y-%m-%d %H:%M:%S.%f").isoformat()
-        event_dict['endd'] = datetime.strptime(event_dict['endd'], "%Y-%m-%d %H:%M:%S.%f").isoformat()
+        event_dict = dict(zip(columns, event))  # 열 이름과 값을 매핑
+        event_dict['start'] = event_dict['start'].strftime("%Y-%m-%dT%H:%M:%S")
+        event_dict['endd'] = event_dict['endd'].strftime("%Y-%m-%dT%H:%M:%S")
         result.append(event_dict)
+
+    return jsonify(result)
     
     return jsonify(events)
 
