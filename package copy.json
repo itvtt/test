@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@fullcalendar/bootstrap": "^6.1.15",
-    "@fullcalendar/core": "^6.1.15",
-    "bootstrap": "^5.3.3",
-    "bootswatch": "^5.3.3"
-  }
-}
