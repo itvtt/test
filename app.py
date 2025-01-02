@@ -141,9 +141,12 @@ def get_events():
     events = cursor.fetchall()
     conn.close()
 
+    result = []
     for event in events:
-        event['start'] = event['start'].isoformat()
-        event['end'] = event['end'].isoformat()
+        event_dict = dict(event)  # Convert row to dict
+        event_dict['start'] = datetime.strptime(event_dict['start'], "%Y-%m-%d %H:%M:%S.%f").isoformat()
+        event_dict['endd'] = datetime.strptime(event_dict['endd'], "%Y-%m-%d %H:%M:%S.%f").isoformat()
+        result.append(event_dict)
     
     return jsonify(events)
 
