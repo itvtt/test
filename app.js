@@ -11,11 +11,11 @@ const app = express();
 // const router = express.Router();
 
 // app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'templates')));
 
 app.get('/', (req, res) => {
   // res.send('Hello, World!');
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'templates', 'index.html'));
 });
 
 
