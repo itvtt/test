@@ -59,6 +59,7 @@ def get_client_ip():
     else:
         ip = request.remote_addr
     return ip
+    
 # def get_category_mapping():
 #     connection = get_db_connection()
 #     try:
@@ -82,24 +83,32 @@ def get_client_ip():
 #     finally:
 #         connection.close()
 
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 def get_category_mapping():
-    conn = psycopg2.connect(database=database, user=user, password=password, host=host, port=8080)
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
-    
-    sql = """
-    SELECT category1, STRING_AGG(category2, ',') AS category2_list
-    FROM code_posts
-    WHERE is_deleted = FALSE
-    GROUP BY category1
-    """
-    cursor.execute(sql)
-    result = cursor.fetchall()
-    conn.close()
-    
-    # 이제 row를 딕셔너리처럼 접근 가능
-    category_mapping = {row['category1']: row['category2_list'].split(',') for row in result}
-    return category_mapping
+    connection = get_db_connection()
+    try:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            # SQL 쿼리 실행
+            sql = """
+            SELECT category1, STRING_AGG(category2, ',') AS category2_list
+            FROM code_posts
+            WHERE is_deleted = FALSE
+            GROUP BY category1
+            """
+            cursor.execute(sql)
+            result = cursor.fetchall()
+        
+        # category_mapping 생성
+        category_mapping = {
+            row['category1']: row['category2_list'].split(',')
+            for row in result
+        }
+        return category_mapping
+    finally:
+        connection.close()
+
 
 
 def get_category1_list():
