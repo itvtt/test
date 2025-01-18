@@ -445,7 +445,7 @@ def submit():
 @app.route("/post/<int:post_id>", methods=["GET", "POST"])
 def post_detail(post_id):
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)  # RealDictCursor로 변경
 
     # 게시글 데이터 가져오기
     cursor.execute("""
