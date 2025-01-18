@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/jodit/jodit.min.css" />
+    <script src="/static/jodit/jodit.min.js"></script>
+    <title>{{ post[1] }}</title>
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F7;
+    margin: 0;
+    padding-left: 200px;
+    padding-right: 200px;
+    }
+    header {
+      display: flex;
+      justify-content: center;
+      padding: 10px;
+      background-color: #F5F5F7;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .categories1-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+    }
+    .categories1 {
+      padding: 0px 220px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .categories1 button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .categories1 button:hover {
+      background-color: #0056b3;
+    }
+    .write-button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .write-button:hover {
+      background-color: #218838;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      margin: 20px;
+    }
+    .categories2 {
+      width: 100px;
+      padding: 10px;
+      border-right: 1px solid #ddd;
+      text-align: center;
+      background-color: #f9f9f9;
+      min-height: 100vh; /* 화면 전체 높이를 유지 */
+    }
+    .categories2 p {
+      text-align: center;
+      color: #777;
+      margin-top: 20px;
+    }
+    .categories2 button {
+      display: block;
+      margin: 5px 0;
+      padding: 10px;
+      width: 100%;
+      text-align: center;
+      border: none;
+      background-color: #84adda;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .categories2 button:hover {
+      background-color: #a5c8ee;
+    }
+    .posts {
+        flex: 1;
+        padding: 10px;
+      }
+      table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed; /* 테이블 셀 너비 고정 */
+  }
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    word-wrap: break-word; /* 단어 단위로 줄바꿈 */
+    word-break: break-word; /* 필요할 경우 단어를 잘라서 줄바꿈 */
+    white-space: normal; /* 내용 줄바꿈 허용 */
+  }
+  th {
+    background-color: #f4f4f4;
+  }
+  tr {
+    cursor: pointer; /* 행에 마우스를 올리면 클릭 가능 */
+  }
+  tr:hover {
+    background-color: #f1f1f1; /* 행에 마우스를 올릴 때 강조 */
+  }
+  .post-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .post-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .post-meta {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+    text-align: center; /* 텍스트와 버튼을 중앙 정렬 */
+    position: relative; /* 자식 요소를 기준으로 위치 설정 */
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    gap: 10px; /* 버튼 간 간격 */
+  }
+  .post-meta a,
+  .post-meta button {
+    display: inline-block;
+    margin: 5px; /* 버튼 간의 간격 추가 */
+    text-align: center;
+  }
+  .post-meta form {
+    display: inline; /* 폼도 버튼처럼 보이도록 설정 */
+  }
+  .post-content {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+
+    line-height: 1.6;
+    background-color: #ffffff; /* 연한 노란색 배경 */
+    color: rgb(0, 0, 0);
+    padding: 15px; /* 내용과 배경 사이에 여백 추가 */
+  }
+  .action-button,
+  .back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  .action-button:hover,
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  .delete-button {
+    background-color: #ff4d4d;
+    border: none;
+    cursor: pointer;
+  }
+  .delete-button:hover {
+    background-color: #cc0000;
+  }
+  
+  .copy-link-button {
+  position: absolute; /* 부모 요소 기준으로 위치 설정 */
+  right: 110px; /* 오른쪽 끝에서 간격 설정 (임베드 버튼과 간격) */
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  }
+
+  .copy-link-button2 {
+    position: absolute; /* 부모 요소 기준으로 위치 설정 */
+    right: 0; /* 오른쪽 끝 정렬 */
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .copy-link-button:hover,
+  .copy-link-button2:hover {
+    background-color: #f4f4f4; /* 호버 시 색상 */
+  }
+  
+
+  .delete-form {
+    margin: 0; /* Remove any default margins */
+  }
+
+  .delete-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .delete-button:hover {
+    background-color: #cc0000;
+  }
+    /* 기본 스타일 */
+  .comments-section {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+  }
+
+  /* 댓글 리스트 (#1) */
+  .comment-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+
+  .comment-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: right;
+  }
+  .comment-content {
+  flex: 1;
+  }
+  .comment-actions {
+      margin-left: 10px;
+      text-align: right;
+  }
+
+  .modidel{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+  }
+  .modidel_l{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-left: 10px;
+  }
+
+  .action-menu {
+    align-items: right;
+    justify-content: right;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .edit-button{
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 5px;
+    cursor: pointer;
+  }
+  .custom-hr {
+  border: none;                /* 기본 테두리 제거 */
+  border-top: 2px solid #ddd;  /* 위쪽에만 선 추가 */
+  margin: 20px 0;              /* 상하 여백 */
+  width: 100%;                 /* 너비 설정 */
+  }
+  #comment-actions {
+  display: flex; /* Flexbox 활성화 */
+  gap: 10px; /* 버튼 간 간격 조정 */
+  align-items: center; /* 버튼 수직 정렬 (필요시) */
+  }
+
+
+
+
+
+
+    </style>
+  </head>
+  <body>
+    <header>
+    </header>
+
+    <div class="post-container">
+      <!-- 게시글 제목과 삭제 버튼 -->
+      <div class="post-header">
+        <div class="post-title">{{ post['title'] }}</div>
+        <form action="/post/{{ post['id'] }}/delete" method="POST" onsubmit="return confirmDelete()" class="delete-form">
+          <button type="submit" class="action-button delete-button">삭제</button>
+        </form>
+      </div>
+
+      <!-- 작성자 정보 -->
+      <div class="popo">
+        작성자: {{ post['author'] }} | 작성 시간: {{ post['created_at'] }}
+        {% if post['updated_at'] and post['updated_by'] %}
+          <br><br>
+          수정자: {{ post['updated_by'] }} | 최근 수정: {{ post['updated_at'] }}
+        {% endif %}
+        {% if post['updated_by'] and post['deleted_at'] %}
+          | 삭제 시간: {{ post['deleted_at'] }} | 삭제자: {{ post['deleted_by'] }}
+        {% endif %}
+      </div>
+
+      <!-- 게시글 메타 정보 -->
+      <div class="post-meta">
+        <a href="/abs?category1={{ category1 }}&category2={{ category2 }}&page={{ current_page }}" class="back-button">목록</a>
+        <a href="/post/{{ post['id'] }}/edit?show_code={{ 'true' if show_code else 'false' }}" class="action-button">수정</a>
+        <button class="action-button copy-link-button" onclick="copyToClipboard()">링크복사</button>
+        <button class="action-button copy-link-button2" onclick="copyToClipboard2()">임베드복사</button>
+      </div>
+
+      <!-- 게시글 내용 -->
+      <div class="post-content">
+        {{ content_to_display | safe }}
+      </div>
+
+      <div class="comments-section">
+        <h3>댓글</h3>
+      
+              <!-- 댓글 리스트 -->
+      {% for comment in comments %}
+      <div class="comment-item" id="comment-{{ comment['id'] }}">
+        <div class="comment-content">
+          <p><strong>{{ comment['author'] }}</strong></p>
+          <div class="modidel">
+            <button class="edit-button" onclick="showEditForm({{ comment['id'] }}, {{ post['id'] }})">수정</button>
+          <form action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/delete" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+            <button type="submit" class="delete-button">삭제1</button>
+          </form>
+        </div>
+          <div style="white-space: pre-line;">
+            {{ comment['comment'] | safe }}
+          </div>
+          <div class="modidel_l">
+          <small>{{ comment['created_at'] }}{% if comment['updated_at'] %} (수정됨: {{ comment['updated_at'] }}){% endif %}</small>
+          <button class="reply-button" onclick="showReplyForm({{ comment['id'] }})">대댓글 쓰기1</button>
+        </div>
+            <hr class="custom-hr">
+        </div>
+      </div>
+
+
+        <!-- 대댓글 입력 폼 -->
+        <div id="reply-form-{{ comment['id'] }}" class="reply-form" style="display: none;">
+          <form action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/reply" method="POST">
+            <textarea name="reply" placeholder="대댓글 내용을 입력하세요" required style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+            <button type="submit" class="reply-save-button" style="margin-top: 10px; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px;">대댓글 저장</button>
+            <button type="button" class="cancel-button" onclick="hideReplyForm({{ comment['id'] }})" style="margin-top: 10px; padding: 10px; background-color: #ff4d4d; color: white; border: none; border-radius: 5px;">취소</button>
+          </form>
+        </div>
+
+              <!-- 대댓글 리스트 -->
+        <div id="replies-{{ comment['id'] }}" class="replies-section" style="margin-left: 40px; margin-top: 10px;">
+          {% if comment.replies %}
+          {% for reply in comment.replies %}
+          <div class="reply-item" id="reply-{{ reply['reply_id'] }}">
+            <div class="modidel">
+              <!-- <button class="reply-button" onclick="showReplyForm({{ reply['reply_id'] }})">대댓글쓰기2</button> -->
+              <!-- <button class="edit-reply-button" onclick="showEditReplyForm({{ reply['reply_id'] }})">수정2</button> -->
+              <!-- <form action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/reply/{{ reply['reply_id'] }}/delete" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                  <button type="submit" class="delete-reply-button">삭제2</button>
+              </form> -->
+          </div>
+            <div id="reply-content-{{ reply['reply_id'] }}">
+                <p><strong>{{ reply['reply_author'] }}</strong></p>
+                <p>{{ reply['reply'] }}</p>
+                <small>{{ reply['reply_created_at'] }}{% if reply['reply_updated_at'] %} (수정됨: {{ reply['reply_updated_at'] }}){% endif %}</small>
+                <hr class="custom-hr">
+            </div>
+        
+            <!-- 대댓글 입력 폼 -->
+            <div id="reply-form-{{ reply['reply_id'] }}" class="reply-form" style="display: none;">
+                <form action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/reply" method="POST">
+                    <textarea name="reply" placeholder="대댓글 내용을 입력하세요" required style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+                    <button type="submit" class="reply-save-button" style="margin-top: 10px; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px;">저장1</button>
+                    <button type="button" class="cancel-reply-button" onclick="hideReplyForm({{ reply['reply_id'] }})" style="margin-top: 10px; padding: 10px; background-color: #ff4d4d; color: white; border: none; border-radius: 5px;">취소1</button>
+                </form>
+            </div>
+       
+        </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+        <!-- 대댓글 입력 폼 -->
+        <!-- <div id="reply-form-{{ comment['id'] }}" class="reply-form" style="display: none; margin-left: 40px; margin-top: 10px;">
+          <form action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/reply" method="POST">
+            <textarea name="reply" placeholder="대댓글 내용을 입력하세요" required style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+            <button type="submit" class="reply-save-button" style="margin-top: 10px; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px;">대댓글 저장</button>
+            <button type="button" class="cancel-button" onclick="hideReplyForm({{ comment['id'] }})" style="margin-top: 10px; padding: 10px; background-color: #ff4d4d; color: white; border: none; border-radius: 5px;">취소</button>
+          </form>
+        </div> -->
+        {% endfor %}
+      </div>
+      
+      <!-- 댓글 작성 폼 -->
+      <form action="/post/{{ post['id'] }}" method="POST" id="comment-form" style="margin-top: 20px;">
+        <div
+          contenteditable="true"
+          id="comment-editor"
+          class="comment-editor"
+          placeholder="댓글 내용을 입력하세요"
+          style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; min-height: 150px; background: white;"
+        ></div>
+        <textarea name="comment" id="comment-textarea" style="display: none;"></textarea>
+        <button type="submit" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px;">댓글 작성</button>
+      </form>
+    </div>
+    <!-- 스크립트 부분 -->
+    <script>
+// 댓글 수정 폼 표시
+function showEditForm(commentId, postId) {
+    const commentElement = document.getElementById(`comment-${commentId}`);
+    const contentElement = commentElement.querySelector('.comment-content');
+    
+    // 기존 내용 가져오기 (더 명확한 선택자 사용)
+    const currentContentElement = contentElement.querySelector('.comment-text');
+    if (!currentContentElement) {
+        alert("수정할 내용을 찾을 수 없습니다.");
+        return;
+    }
+    const currentContent = currentContentElement.textContent.trim();
+
+    // 기존 내용을 수정 입력 폼으로 교체
+    const editFormHtml = `
+        <textarea id="edit-textarea-${commentId}" style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">${currentContent}</textarea>
+        <div style="margin-top: 10px;">
+            <button onclick="saveEdit(${commentId}, ${postId})" style="margin-right: 10px; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px;">저장</button>
+            <button onclick="cancelEdit(${commentId})" style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: none; border-radius: 5px;">취소</button>
+        </div>
+    `;
+
+    // 기존 내용 대체
+    contentElement.innerHTML = editFormHtml;
+}
+
+
+
+
+// 대댓글 수정 폼 표시
+function showEditReplyForm(replyId) {
+    const replyElement = document.getElementById(`reply-${replyId}`);
+    const replyContentElement = replyElement.querySelector('#reply-content-' + replyId);
+    
+    // 기존 내용 저장
+    const currentReply = replyContentElement.querySelector('p:nth-child(2)').textContent.trim();
+
+    // 수정 입력 폼 생성
+    const editReplyFormHtml = `
+        <textarea id="edit-reply-textarea-${replyId}" style="width: 100%; height: 100px;">${currentReply}</textarea>
+        <button onclick="saveEditReply(${replyId})" style="margin: 5px; padding: 10px; background-color: #28a745; color: white;">저장</button>
+        <button onclick="cancelEditReply(${replyId})" style="margin: 5px; padding: 10px; background-color: #ff4d4d; color: white;">취소</button>
+    `;
+    replyContentElement.innerHTML = editReplyFormHtml;
+}
+function saveEdit(commentId, postId) {
+    const updatedContent = document.getElementById(`edit-textarea-${commentId}`).value.trim();
+
+    if (!updatedContent) {
+        alert("수정할 내용을 입력하세요.");
+        return;
+    }
+
+    console.log(`Saving comment with ID: ${commentId}, Post ID: ${postId}`);
+    console.log(`Updated content: ${updatedContent}`);
+
+    fetch(`/post/${postId}/comment/${commentId}/edit`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment: updatedContent }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Server response:", data); // 서버 응답 확인
+        if (data.success) {
+            const commentElement = document.getElementById(`comment-${commentId}`);
+            commentElement.querySelector('.comment-content').innerHTML = `
+                <p><strong>${data.author}</strong></p>
+                <div class="comment-text" style="white-space: pre-line;">${data.updatedComment}</div>
+                <small>${data.updatedAt} (수정됨)</small>
+            `;
+            alert("댓글이 성공적으로 수정되었습니다.");
+        } else {
+            alert(`수정 실패: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error("Error during fetch:", error);
+        alert("댓글 수정 중 오류가 발생했습니다.");
+    });
+}
+
+
+
+
+
+
+function cancelEdit(commentId) {
+    // 페이지를 새로고침하거나 기존 내용을 다시 로드
+    location.reload();
+}
+function saveEditReply(replyId) {
+    const updatedReply = document.getElementById(`edit-reply-textarea-${replyId}`).value;
+
+    fetch(`/post/comment/reply/${replyId}/edit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reply: updatedReply }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const replyElement = document.getElementById(`reply-${replyId}`);
+            replyElement.querySelector('#reply-content-' + replyId).innerHTML = `
+                <p><strong>${data.author}</strong></p>
+                <p>${data.updatedReply}</p>
+                <small>${data.updatedAt} (수정됨)</small>
+            `;
+        }
+    });
+}
+
+function cancelEditReply(replyId) {
+    location.reload();
+}
+// 댓글 및 대댓글 삭제 확인
+function confirmDelete() {
+  return confirm("정말 삭제하시겠습니까?");
+}
+
+      const backButton = document.getElementById("back-button");
+
+      // 삭제 확인 메시지
+      function confirmDelete() {
+        return confirm("정말 삭제하시겠습니까?");
+      }
+
+      function copyToClipboard() {
+        const currentUrl = window.location.href; // 현재 URL 가져오기
+        navigator.clipboard
+          .writeText(currentUrl)
+          .then(() => {
+            alert("링크가 복사되었습니다!"); // 성공 메시지
+          })
+          .catch(err => {
+            console.error("링크 복사에 실패했습니다: ", err);
+          });
+      }
+
+      function copyToClipboard2() {
+        const currentUrl = window.location.href; // 현재 URL 가져오기
+        const embedCode = `<iframe src="${currentUrl}" width="600" height="400" frameborder="0" allowfullscreen></iframe>`; // HTML 임베드 코드 생성
+        navigator.clipboard
+          .writeText(embedCode)
+          .then(() => {
+            alert("임베드 코드가 복사되었습니다!"); // 성공 메시지
+          })
+          .catch(err => {
+            console.error("임베드 코드 복사에 실패했습니다: ", err);
+          });
+      }
+      let commentCount = 1; // 현재 댓글 ID 카운트
+
+// 액션 메뉴 토글
+function toggleActions(commentId) {
+    const actionsMenu = document.getElementById(`actions-${commentId}`);
+    actionsMenu.style.display = actionsMenu.style.display === "none" ? "block" : "none";
+}
+
+
+
+// 댓글 추가
+function addComment(event) {
+    event.preventDefault();
+    const author = document.getElementById("new-author").value.trim();
+    const comment = document.getElementById("new-comment").value.trim();
+
+    if ( !comment) {
+        alert(" 댓글 내용을 입력해주세요.");
+        return;
+    }
+
+    commentCount++;
+    const newComment = `
+        <div class="comment-item" id="comment-${commentCount}">
+            <div class="comment-content">
+                <p><strong>${author}</strong></p>
+                <p>${comment}</p>
+                <small>${new Date().toLocaleString()}</small>
+            </div>
+            <div class="comment-actions">
+                <button class="action-menu" onclick="toggleActions(${commentCount})">...</button>
+                <div id="actions-${commentCount}" class="actions-menu" style="display: none;">
+                    <button class="edit-button" onclick="showEditForm(${commentCount})">수정</button>
+                    <button class="delete-button" onclick="deleteComment(${commentCount})">삭제</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-form-${commentCount}" class="comment-edit" style="display: none;">
+            <textarea placeholder="댓글 내용">${comment}</textarea>
+            <div class="edit-actions">
+                <button class="cancel-button" onclick="hideEditForm(${commentCount})">취소</button>
+                <button class="save-button">등록</button>
+            </div>
+        </div>
+    `;
+
+    const commentsSection = document.querySelector(".comments-section");
+    commentsSection.insertAdjacentHTML("beforeend", newComment);
+
+    document.getElementById("new-author").value = "";
+    document.getElementById("new-comment").value = "";
+}
+// 댓글 입력창에서 클립보드 이미지를 Base64로 변환하고 미리보기로 표시
+document.getElementById("comment-editor").addEventListener("paste", function (event) {
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const items = clipboardData.items;
+
+    for (const item of items) {
+        if (item.type.indexOf("image") !== -1) {
+            const file = item.getAsFile();
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const base64Image = event.target.result;
+
+                // Base64 이미지를 댓글 본문에 추가
+                const commentEditor = document.getElementById("comment-editor");
+                const imgElement = document.createElement("img");
+                imgElement.src = base64Image;
+                imgElement.style.maxWidth = "200px";
+                imgElement.style.maxHeight = "200px";
+                imgElement.style.marginTop = "10px";
+                commentEditor.appendChild(imgElement);
+            };
+
+            reader.readAsDataURL(file); // 이미지 파일을 Base64로 변환
+            event.preventDefault(); // 기본 붙여넣기 동작 방지
+            return;
+        }
+    }
+});
+document.getElementById("comment-form").addEventListener("submit", function (event) {
+    const editorContent = document.getElementById("comment-editor").innerHTML; // Get content from editor
+    const commentTextarea = document.getElementById("comment-textarea");
+    const authorInput = document.getElementById("author-input");
+
+    // Check if the content or author is empty
+    if (!editorContent.trim()) {
+        alert("댓글 내용을 입력해주세요.");
+        event.preventDefault(); // Stop form submission
+        return;
+    }
+
+    // Populate hidden textarea with content
+    commentTextarea.value = editorContent;
+
+    console.log("Form data ready for submission:", {
+        author: authorInput.value,
+        comment: commentTextarea.value,
+    });
+});
+function saveEditReply(replyId) {
+    const updatedReply = document.getElementById(`edit-reply-textarea-${replyId}`).value;
+
+    if (!updatedReply.trim()) {
+        alert("내용을 입력하세요.");
+        return;
+    }
+
+    fetch(`/post/${postId}/comment/${commentId}/reply/${replyId}/edit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reply: updatedReply }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const replyElement = document.getElementById(`reply-${replyId}`);
+            replyElement.querySelector('#reply-content-' + replyId).innerHTML = `
+                <p><strong>${data.author}</strong></p>
+                <p>${data.updatedReply}</p>
+                <small>${data.updatedAt} (수정됨)</small>
+            `;
+            alert("대댓글이 성공적으로 수정되었습니다.");
+        } else {
+            alert(`수정에 실패했습니다: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error("Error during fetch:", error);
+        alert("수정 요청 중 오류가 발생했습니다.");
+    });
+}
+
+
+
+
+    </script>
+  </body>
+</html>

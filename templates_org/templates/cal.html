@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flask Calendar</title>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css"/> -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+
+      html, body{
+        background-color: #f7f7f7;
+      }
+
+    /* 첫 번째 버튼 스타일 */
+      .fc-myCustomButton-button.fc-button.fc-button-primary {
+          background-color: #ffffff; /* 첫 번째 버튼의 배경색 */
+          color: #000000; /* 텍스트 색상 */
+          display: none; /* 버튼 숨기기 */
+      }
+
+      /* 두 번째 버튼 스타일 */
+      .fc-next-button.fc-button.fc-button-primary {
+          background-color: #F5F5F7; /* 두 번째 버튼의 배경색 */
+          color: #000000; /* 텍스트 색상 */
+          align-items: center;
+          border: none;
+      }
+      .fc-prev-button.fc-button.fc-button-primary {
+          background-color: #F5F5F7; /* 두 번째 버튼의 배경색 */
+          color: #000000; /* 텍스트 색상 */
+          align-items: center;
+          border: none;
+      }
+      .fc-today-button.fc-button.fc-button-primary {
+          background-color: #ffffff; /* 두 번째 버튼의 배경색 */
+          color: #000000; /* 텍스트 색상 */
+          display: none; /* 버튼 숨기기 */
+      }
+      
+
+      .fc-toolbar-chunk {
+        display: flex;
+        margin-top: 50px;
+      }
+
+      /* 중앙 텍스트를 한 줄로 표시 */
+      .fc-toolbar-title {
+        font-size: 20px; /* 원하는 폰트 크기 조절 */
+        white-space: nowrap; /* 줄바꿈 방지 */
+      }
+      
+      .fc-daygrid-day-frame {
+        padding-bottom: 20px !important; /* 하단 패딩 */
+        box-sizing: border-box; /* 패딩이 높이에 포함되도록 설정 */
+      }
+      .fc-daygrid-event-dot,
+      .fc-event-dot {
+        display: none !important;
+      }
+      /* 카테고리별 배경색 */
+      .event-pm {
+        background-color: #007AFF !important; /* 파란색 (PM) */
+        color: white !important;
+        border: none;
+      }
+      .event-bm {
+        background-color: #FF3B30 !important; /* 주황색 (BM) */
+        color: white !important;
+        border: none;
+      }
+      .event-cm {
+        background-color: #34C759 !important; /*  (CM) */
+        color: white !important;
+        border: none;
+      }
+      .event-etc {
+        background-color: #5856D6 !important; /* 옅은 보라색 (기타) */
+        color: white !important;
+        border: none;
+      }
+      .event-auto {
+        background-color: #6bc4ff !important; /* 옅은 보라색 (기타) */
+        color: white !important;
+        border: none;
+      }
+      /* 시간과 아이콘 숨기기 */
+      .fc-event-time,
+      .fc-event-dot {
+        display: none !important;
+      }
+
+      /* 모달 스타일 */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+        border-radius: 8px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      input,
+      select,
+      button,
+      textarea {
+        display: block;
+        margin: 10px 0;
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+      textarea {
+        resize: vertical;
+        height: 80px;
+      }
+      .date-container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .date-container input {
+        width: 48%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="calendar"></div>
+
+    <!-- 모달 폼 -->
+    <div id="eventModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h3>일정</h3>
+        <!-- Start & End -->
+        <button id="deleteEvent" style="background-color: red; color: white">
+          삭제
+        </button>
+
+        <div class="date-container">
+          <input type="date" id="eventStart" required />
+          <input type="date" id="eventEnd" required />
+        </div>
+        <!-- Category -->
+
+        <select id="eventCate">
+          <option value="PM">PM</option>
+          <option value="BM">BM</option>
+          <option value="CM">CM</option>
+          <option value="기타">기타</option>
+          <option value="AUTO">AUTO</option>
+        </select>
+        <button id="confirmCategory" style="display: none">컨펌</button>
+        <!-- Title -->
+        <input type="text" id="eventTitle" placeholder="제목" required />
+
+        <!-- Description -->
+        <textarea id="eventText" placeholder="추가 설명 (선택사항)"></textarea>
+
+        <!-- Save Button -->
+        <button id="saveEvent">저장</button>
+
+        <!-- 작성자와 수정자 표시 영역 -->
+        <div>
+          <label>작성자:</label>
+          <span id="createdBy"></span>
+        </div>
+        <div>
+          <label>수정자:</label>
+          <span id="updatedBy"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById("calendar");
+        var modal = document.getElementById("eventModal");
+        var closeModal = document.getElementById("closeModal");
+        var saveEvent = document.getElementById("saveEvent");
+        var deleteEvent = document.getElementById("deleteEvent");
+
+        var eventTitleInput = document.getElementById("eventTitle");
+        var eventStartInput = document.getElementById("eventStart");
+        var eventEndInput = document.getElementById("eventEnd");
+        var eventCateInput = document.getElementById("eventCate");
+        var eventTextInput = document.getElementById("eventText");
+
+        var currentEventId = null; // 수정 및 삭제할 이벤트 ID 저장
+        const holidays = [
+  "2025-01-01", // 신정
+  "2024-02-09", // 설날 연휴 시작
+  "2024-02-10", // 설날
+  "2024-02-11", // 설날 연휴 끝
+  "2025-03-01", // 삼일절
+  "2025-05-05", // 어린이날
+  "2025-06-06", // 현충일
+  "2025-08-15", // 광복절
+  "2024-09-17", // 추석 연휴 시작
+  "2024-09-18", // 추석
+  "2024-09-19", // 추석 연휴 끝
+  "2025-10-03", // 개천절
+  "2025-10-09", // 한글날
+  "2025-12-25", // 성탄절
+];
+
+function isHoliday(dateStr) {
+  return holidays.includes(dateStr);
+}
+        // FullCalendar 초기화
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          locale: 'ko',
+          direction : 'ltr',
+          buttonText:{
+          today:    'Today',
+          month:    '월',
+          list:     '리스트'
+          },
+          customButtons: {
+              myCustomButton: {
+                text: 'custom!',
+                click: function() {
+                  alert('clicked the custom button!');
+                }
+              }
+            },
+          headerToolbar: {
+          left: 'today myCustomButton',
+          center: 'prev title next', // 타이틀을 가운데 정렬
+          right : ''
+          // right: 'dayGridMonth,list'
+          },
+          initialView: "dayGridMonth",
+          timeZone: "Asia/Seoul",
+          events: "/events",
+          editable: true,
+          selectable: true,
+          displayEventTime: false,
+          contentHeight: "auto",
+
+          dayCellDidMount: function(info) {
+            let dateStr = info.date.toISOString().split("T")[0]; // 날짜를 YYYY-MM-DD 형식으로 변환
+    let dayOfWeek = info.date.getDay(); // 요일 (0: 일요일, 6: 토요일)
+    let dayNumber = info.el.querySelector(".fc-daygrid-day-number"); // 날짜 숫자 요소
+
+    // 요일별 색상 설정
+    if (dayOfWeek === 0 || isHoliday(dateStr)) {
+      // 일요일 또는 공휴일
+      dayNumber.style.color = "red";
+    } else if (dayOfWeek === 6) {
+      // 토요일
+      dayNumber.style.color = "blue";
+    }
+  },
+
+          // 이벤트 추가 시 모달 열기
+          select: function (info) {
+            currentEventId = null; // 새 이벤트 추가
+            eventCateInput.value = "PM";
+            eventTitleInput.value = "";
+            eventTextInput.value = "";
+            eventStartInput.value = info.startStr;
+            eventEndInput.value = info.startStr;
+
+            deleteEvent.style.display = "none"; // 삭제 버튼 숨기기
+            modal.style.display = "block";
+          },
+
+          // 이벤트 클릭 시 수정 모달 열기
+          eventClick: function (info) {
+            var event = info.event;
+
+            currentEventId = event.id; // 현재 이벤트 ID 저장
+            eventCateInput.value = event.extendedProps.cate || "기타";
+            eventTitleInput.value = event.title;
+            eventTextInput.value = event.extendedProps.text || "";
+            // 작성자와 수정자 정보 표시
+            document.getElementById("createdBy").textContent =
+              event.extendedProps.created_by || "";
+            document.getElementById("updatedBy").textContent =
+              event.extendedProps.updated_by || "";
+
+            // end 날짜 하루 빼서 표시
+            let endDate = new Date(event.endStr);
+            endDate.setDate(endDate.getDate());
+
+            eventStartInput.value = event.startStr.split("T")[0];
+            eventEndInput.value = endDate.toISOString().split("T")[0];
+
+            deleteEvent.style.display = "block"; // 삭제 버튼 표시
+
+            modal.style.display = "block";
+          },
+          eventDrop: function (info) {
+            let event = info.event;
+
+            // start와 end 날짜를 가져오기
+            let updatedStart = event.startStr.split("T")[0];
+            let updatedEnd = event.end
+              ? new Date(event.end) // FullCalendar는 end를 다음날 00:00으로 설정하므로
+              : new Date(updatedStart);
+
+            updatedEnd.setDate(updatedEnd.getDate() - 1); // 종료 날짜 하루 빼기
+
+            // 서버로 수정 요청 전송
+            $.ajax({
+              url: `/events/${event.id}`,
+              method: "PUT",
+              contentType: "application/json",
+              data: JSON.stringify({
+                title: event.title,
+                start: updatedStart,
+                end: updatedEnd.toISOString().split("T")[0], // 올바른 종료 날짜
+                cate: event.extendedProps.cate || "기타",
+                text: event.extendedProps.text || "",
+              }),
+              success: function () {
+                calendar.refetchEvents(); // 캘린더 새로고침
+              },
+              error: function () {
+                console.error("Error updating event after drag and drop.");
+              },
+            });
+          },
+
+          // 이벤트 스타일링
+          eventDidMount: function (info) {
+            // 카테고리별 스타일 적용
+            switch (info.event.extendedProps.cate) {
+              case "PM":
+                info.el.classList.add("event-pm");
+                break;
+              case "BM":
+                info.el.classList.add("event-bm");
+                break;
+              case "CM":
+                info.el.classList.add("event-cm");
+                break;
+              case "AUTO":
+                info.el.classList.add("event-auto");
+                break;
+              default:
+                info.el.classList.add("event-etc");
+                break;
+            }
+
+            // 카테고리가 "AUTO"인 경우에만 "컨펌" 버튼 추가
+            if (info.event.extendedProps.cate === "AUTO") {
+              var confirmButton = document.createElement("button");
+              confirmButton.innerText = "컨펌";
+
+              confirmButton.style.backgroundColor = "white"; // 배경 흰색
+              confirmButton.style.color = "black"; // 글자 색상 검정
+              confirmButton.style.width = "40px"; // 너비 설정
+              confirmButton.style.height = "20px"; // 높이 설정
+              confirmButton.style.fontSize = "10px"; // 폰트 크기 작게 설정
+              confirmButton.style.border = "1px solid lightgray"; // 테두리 추가
+              confirmButton.style.borderRadius = "5px"; // 버튼 모서리 둥글게
+              confirmButton.style.position = "absolute"; // 절대 위치 지정
+              confirmButton.style.right = "5px"; // 이벤트 셀 내부 오른쪽 끝에 위치
+              confirmButton.style.padding = "2px"; /* 버튼 내부 여백을 줄임 */
+              info.el.style.display = "flex";
+              info.el.style.alignItems = "center"; // 세로 정렬
+              info.el.style.paddingRight = "5px"; // 오른쪽 여백 추가
+              confirmButton.style.cursor = "pointer"; // 마우스 포인터 변경
+
+              // 버튼 클릭 시 카테고리를 "PM"으로 변경하고 서버에 PUT 요청 보내기
+              confirmButton.addEventListener("click", function (e) {
+                e.stopPropagation(); // 이벤트 전파 중지 (eventClick 실행 방지)
+                $.ajax({
+                  url: `/events/${info.event.id}`,
+                  method: "PUT",
+                  contentType: "application/json",
+                  data: JSON.stringify({
+                    title: info.event.title,
+                    start: info.event.startStr.split("T")[0],
+                    end: info.event.endStr
+                      ? new Date(info.event.endStr).toISOString().split("T")[0]
+                      : info.event.startStr.split("T")[0],
+                    cate: "PM", // 카테고리 "PM"으로 변경
+                    text: info.event.extendedProps.text,
+                  }),
+                  success: function () {
+                    calendar.refetchEvents(); // 캘린더 새로고침
+                  },
+                  error: function () {
+                    console.error("Error updating event category.");
+                  },
+                });
+              });
+
+              // 버튼을 이벤트의 DOM에 추가설정
+              info.el.style.position = "relative";
+              info.el.appendChild(confirmButton);
+            }
+          },
+        });
+
+        calendar.render();
+
+        // 모달 닫기
+        closeModal.onclick = function () {
+          modal.style.display = "none";
+        };
+        window.onclick = function (event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        };
+
+        // 이벤트 저장 (추가 또는 수정)
+        saveEvent.onclick = function () {
+          let title = eventTitleInput.value;
+          let start = eventStartInput.value;
+          let end = eventEndInput.value;
+          let cate = eventCateInput.value;
+          let text = eventTextInput.value;
+
+          if (title && start && end && cate) {
+            let url = currentEventId ? `/events/${currentEventId}` : "/events";
+            let method = currentEventId ? "PUT" : "POST";
+
+            $.ajax({
+              url: url,
+              method: method,
+              contentType: "application/json",
+              data: JSON.stringify({
+                title: title,
+                start: start,
+                end: end,
+                cate: cate,
+                text: text,
+              }),
+              success: function () {
+                modal.style.display = "none";
+                calendar.refetchEvents();
+              },
+              error: function () {
+                console.error("Error saving event.");
+              },
+            });
+          } else {
+            alert("Please fill in all required fields.");
+          }
+        };
+
+        // 이벤트 삭제
+        deleteEvent.onclick = function () {
+          if (currentEventId) {
+            $.ajax({
+              url: `/events/${currentEventId}`,
+              method: "DELETE",
+              success: function () {
+                modal.style.display = "none";
+                calendar.refetchEvents();
+              },
+              error: function () {
+                console.error("Error deleting event.");
+              },
+            });
+          }
+        };
+      });
+    </script>      
+  </body>
+</html>

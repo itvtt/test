@@ -1,0 +1,141 @@
+// const editor = new Jodit("#editor", {
+    //   askBeforePasteHTML: false,
+    //   askBeforePasteFromWord: false,
+    //   defaultActionOnPaste: "insert_as_text",
+    //   uploader: {
+    //     insertImageAsBase64URI: true,
+    //   },
+    //   buttons: [
+    //     "bold",
+    //     "italic",
+    //     "underline",
+    //     "strikethrough",
+    //     "|",
+    //     "fontsize",
+    //     "textColor",
+    //     "backgroundColor",
+    //     "|",
+    //     "image",
+    //     "link",
+    //     "|",
+    //     "alignLeft",
+    //     "alignCenter",
+    //     "alignRight",
+    //     "alignJustify",
+    //     "|",
+    //     "table",
+    //     "|",
+    //     "undo",
+    //     "redo",
+    //     "|",
+    //     "fullsize",
+    //     "source",
+    //   ],
+    //   removeButtons: ["font"], // font 버튼 제거
+    //   styleValues: {
+    //     fontFamily: "Helvetica", // 기본 폰트를 Helvetica로 고정
+    //   },
+    //   defaultStyle: "font-family: Helvetica;", // 기본 폰트 설정
+    //   controls: {
+    //     textColor: {
+    //       iconURL: "/static/icon/textcolor.jpg", // 텍스트 색상 아이콘
+    //       popup: (editor, current, control, close) => {
+    //         const brushPopup = editor.options.controls.brush.popup(
+    //           editor,
+    //           current,
+    //           control,
+    //           close
+    //         );
+    //         // Text 탭 기본 활성화
+    //         const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+    //         if (tabs.length > 1) {
+    //           tabs[1].click(); // "Text" 탭 활성화
+    //         }
+    //         return brushPopup;
+    //       },
+    //       exec: (editor, event, control, close) => {
+    //         const value = editor.options.controls.brush.exec(
+    //           editor,
+    //           event,
+    //           control,
+    //           close
+    //         );
+    //         editor.s.applyStyle({ color: value });
+    //         return value;
+    //       },
+    //       tooltip: "텍스트 색상 변경",
+    //     },
+    //     backgroundColor: {
+    //       iconURL: "/static/icon/backcolor.jpg", // 배경 색상 아이콘
+    //       popup: (editor, current, control, close) => {
+    //         const brushPopup = editor.options.controls.brush.popup(
+    //           editor,
+    //           current,
+    //           control,
+    //           close
+    //         );
+
+    //         // Background 탭 기본 활성화
+    //         const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+    //         if (tabs.length > 0) {
+    //           tabs[0].click(); // "Background" 탭 활성화
+    //         }
+    //         return brushPopup;
+    //       },
+    //       exec: (editor, event, control, close) => {
+    //         const value = editor.options.controls.brush.exec(
+    //           editor,
+    //           event,
+    //           control,
+    //           close
+    //         );
+    //         editor.s.applyStyle({ backgroundColor: value });
+    //         return value;
+    //       },
+    //       tooltip: "배경 색상 변경",
+    //     },
+    //     alignLeft: {
+    //       icon: "left",
+    //       exec: (editor) => editor.execCommand("justifyLeft"),
+    //       tooltip: "왼쪽 정렬",
+    //     },
+    //     alignCenter: {
+    //       icon: "center",
+    //       exec: (editor) => editor.execCommand("justifyCenter"),
+    //       tooltip: "가운데 정렬",
+    //     },
+    //     alignRight: {
+    //       icon: "right",
+    //       exec: (editor) => editor.execCommand("justifyRight"),
+    //       tooltip: "오른쪽 정렬",
+    //     },
+    //     alignJustify: {
+    //       icon: "justify",
+    //       exec: (editor) => editor.execCommand("justifyFull"),
+    //       tooltip: "양쪽 정렬",
+    //     },
+    //     fontsize: {
+    //       icon: "fontsiz22e",
+    //       exec: (editor) => editor.execCommand("fontsize"),
+    //       tooltip: "글자 크기",
+    //     },
+    //   },
+    //   events: {
+    //     afterInsertNode: (node) => {
+    //       if (node.tagName === "TABLE") {
+    //         // 기본 스타일 적용
+    //         node.style.border = "1px solid black";
+    //         node.style.borderCollapse = "collapse";
+    //         node.style.tableLayout = "auto"; // 텍스트 내용에 따라 셀 크기 자동 조정
+
+    //         // 셀 스타일
+    //         Array.from(node.querySelectorAll("td, th")).forEach((cell) => {
+    //           cell.style.border = "1px solid black";
+    //           cell.style.padding = "8px";
+    //           cell.style.textAlign = "left";
+    //         });
+    //       }
+    //     },
+    //   },
+    //   height: 600,
+    // });

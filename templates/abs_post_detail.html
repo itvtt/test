@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/jodit/jodit.min.css" />
+    <script src="/static/jodit/jodit.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='abs_post_detail_style.css') }}">
+    <script defer src="{{ url_for('static', filename='abs_post_detail_script.js') }}"></script>
+    <title>{{ post[1] }}</title>
+
+  </head>
+  <body>
+    <header>
+    </header>
+
+    <div class="post-container">
+      <div class="post-header">
+        <div class="post-title">{{ post['title'] }}</div>
+        <!-- 오른쪽: 기타 메뉴 -->
+   
+      </div>
+    
+
+      <!-- HTML -->
+<div class="post-meta">
+    <!-- 작성자 정보 -->
+    <div class="popo">
+      <div class="author">
+        {{ post['author'] }} | 작성: {{ post['created_at'] }}
+      </div>
+      {% if post['updated_at'] and post['updated_by'] %}
+      <div class="editor">
+        {{ post['updated_by'] }} | 수정: {{ post['updated_at'] }}
+      </div>
+      {% endif %}
+    </div>
+  <div class="meta-row">
+  </div>
+  <div class="right-menu">
+    <a href="/abs?category1={{ request.form.get('hidden_category1', request.args.get('category1', '')) }}&category2={{ request.form.get('hidden_category2', request.args.get('category2', '')) }}&page={{ request.args.get('page', 1) }}" 
+         class="action-button2">목록</a>
+  
+      <a href="/post/{{ post['id'] }}/edit?show_code={{ 'true' if show_code else 'false' }}&category1={{ request.args.get('category1', '') }}&category2={{ request.args.get('category2', '') }}&page={{ request.args.get('page', 1) }}" 
+         class="action-button2">수정</a>
+    <button class="more-button" onclick="toggleMenu()">...</button>
+    <div id="menu" class="menu-hidden">
+      <form action="/post/{{ post['id'] }}/delete" method="POST" onsubmit="return confirmDelete()" class="delete-form">
+        <button type="submit" class="action-button delete-button">삭제</button>
+      </form>
+      <button class="action-button copy-link-button" onclick="copyToClipboard()">링크복사</button>
+      <button class="action-button copy-link-button2" onclick="copyToClipboard2()">임베드복사</button>
+    </div>
+  </div>
+</div>
+
+
+      
+      <!-- 게시글 내용 -->
+      <div class="post-content">
+        {{ content_to_display | safe }}
+      </div>
+
+      <div class="comments-section">
+        <h3>댓글</h3>
+    
+        <!-- 댓글 리스트 -->
+        {% for comment in comments %}
+        <div class="comment-row">
+          <div class="comment-left">
+              {{ comment['author'] }}
+          </div>
+          <div class="comment-right">
+              <small>
+                  {% if comment['updated_at'] %}
+                      {{ comment['updated_at'] }} (수정)
+                  {% else %}
+                      {{ comment['created_at'] }}
+                  {% endif %}
+              </small>
+              <button class="comment-edit-button" onclick="showEditForm({{ comment['id'] }})">수정1</button>
+              <form action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/delete" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline;">
+                  <button type="submit" class="comment-delete-button">삭제1</button>
+              </form>
+          </div>
+      </div>
+      
+        <div class="comment-item" id="comment-{{ comment['id'] }}">
+            <div class="comment-content">
+              <div class="modidel_one">
+              <div id="comment-text-{{ comment['id'] }}" style="white-space: pre-line;">
+                {{ comment['comment'] | safe }}
+            </div>
+          </div>
+                <!-- 수정 폼 -->
+                <form id="edit-form-{{ comment['id'] }}" action="/post/{{ post['id'] }}/comment/{{ comment['id'] }}/edit" method="POST" style="display: none;">
+                    <textarea name="comment" style="width: 100%; height: 80px;">{{ comment['comment'] }}</textarea>
+                    <button type="submit" style="margin-top: 10px; padding: 5px; background-color: #007bff; color: white; border: none; border-radius: 3px;">저장</button>
+                    <button type="button" onclick="cancelEditForm({{ comment['id'] }})" style="margin-top: 10px; padding: 5px; background-color: #ccc; color: black; border: none; border-radius: 3px;">취소</button>
+                </form>
+              
+                
+                      <!-- 대댓글 쓰기 버튼 -->
+    <button class="reply-button" onclick="showReplyForm({{ comment.id }})">덧글 쓰기</button>
+ 
+    <!-- 대댓글 입력 폼 -->
+    <div class="reply-form" id="reply-form-{{ comment.id }}" style="display: none; margin-top: 10px;">
+      <textarea class="large-textarea" placeholder="덧글 내용을 입력하세요"></textarea>
+      <button onclick="submitReply({{ comment.id }})">덧글 작성</button>
+    </div>
+  </div>
+</div>
+
+<div class="replies">
+  {% if comment.replies %}
+      {% for reply in comment.replies %}
+      <div class="reply-item" id="reply-{{ reply.reply_id }}">
+          <!-- 대댓글 작성자 및 날짜/버튼 -->
+          <div class="reply-header">
+              <div class="reply-author">
+                  {{ reply.reply_author }}
+              </div>
+              <div class="reply-details">
+                  {% if reply.reply_updated_at %}
+                      <small>{{ reply.reply_updated_at }}(수정)</small>
+                  {% else %}
+                      <small>{{ reply.reply_created_at }}</small>
+                  {% endif %}
+                  <button class="comment-edit-button" onclick="editReply({{ reply.reply_id }})">수정2</button>
+                  <button class="comment-delete-button" onclick="deleteReply({{ reply.reply_id }})">삭제2</button>
+              </div>
+          </div>
+          <!-- 대댓글 내용 -->
+          <p id="reply-text-{{ reply.reply_id }}">{{ reply.reply }}</p>
+      </div>
+      {% endfor %}
+  {% endif %}
+</div>
+
+            
+        
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- 댓글 작성 폼 -->
+    <form action="/post/{{ post['id'] }}" method="POST" id="comment-form" style="margin-top: 20px;">
+        <div
+            contenteditable="true"
+            id="comment-editor"
+            class="comment-editor"
+            placeholder="댓글 내용을 입력하세요"
+            style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; min-height: 150px; background: white;"
+        ></div>
+        <textarea name="comment" id="comment-textarea" style="display: none;"></textarea>
+        <button type="submit" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px;">댓글 작성</button>
+    </form>
+ 
+  <script>
+
+
+    </script>
+  </body>
+</html>

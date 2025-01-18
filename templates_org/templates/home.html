@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="search-section">
+            
+    <div class="search-box">
+            <div class="filters">
+                <label>
+                    <select>
+                        <option>ALL</option>
+                        <option>AMAT</option>
+                        <option>FRTP</option>
+                        <option>LSA</option>
+                    </select>
+                </label>
+            </div>
+        <input type="text" placeholder="확장 검색시 %를 붙이세요 (ex 벨로우즈 => 벨로%)" />    
+    </div>
+</section>
+</body>
+</html>

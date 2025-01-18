@@ -1,0 +1,997 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABS</title>
+    <link rel="stylesheet" href="/static/jodit/jodit.min.css" />
+    <script src="/static/jodit/jodit.min.js"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+      body {
+        font-family: 'Roboto',"Nanum Gothic",'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        background-color: #F5F5F7;
+        color: #007bff;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .categories1-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+      }
+      .categories1 {
+        padding: 0px 220px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .categories1 button {
+        padding: 10px 15px;
+        border: none;
+        background-color: #2C3E50 ;
+        color: #ECF0F1;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .categories1 button:hover {
+        background-color: #1ABC9C;
+      }
+      .write-button {
+        padding: 10px 20px;
+        background-color: #1ABC9C;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .write-button:hover {
+        background-color: #218838;
+      }
+      .container {
+        display: flex;
+        flex-direction: row;
+        margin: 20px;
+      }
+      .categories2 {
+        width: 100px;
+        padding: 10px;
+        border-right: 1px solid #ddd;
+        text-align: center;
+        height :700px;
+        /* min-height: 100vh; */
+      }
+      .categories2 p {
+        text-align: center;
+        color: #777;
+        margin-top: 20px;
+      }
+      .categories2 button {
+        display: block;
+        margin: 5px 0;
+        padding: 10px;
+        width: 100%;
+        text-align: center;
+        border: none;
+        background-color: #34495E;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .categories2 button:hover {
+        background-color: #1ABC9C;
+      }
+      .posts {
+        flex: 1;
+        padding: 10px;
+      }
+      #title {
+        width: 100%;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        table-layout: fixed;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      tr {
+        cursor: pointer;
+      }
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+      #editor-container {
+        display: none;
+        width: 100%; /* 부모 컨테이너의 100%로 확장 */
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-sizing: border-box; /* 패딩과 경계선을 포함한 크기 설정 */
+      }
+      textarea#editor {
+        width: 100%;
+        min-height: 700px; /* 에디터 최소 높이 */
+        box-sizing: border-box; /* 패딩과 경계선을 포함한 크기 설정 */
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #pagination button {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  #pagination button:hover {
+    background-color: #555; /* 호버 시 더 밝은 검정색 */
+  }
+  #pagination button[style*="font-weight: bold"] {
+    background-color: #1ABC9C; /* 현재 페이지는 파란색 */
+    color: white;
+  }
+  #add-category {
+    margin-left: 10px;
+    height : 10px;
+    display: flex; /* Flexbox 사용 */
+    align-items: center; /* 상하 가운데 정렬 */
+    justify-content: center; /* 좌우 가운데 정렬 */
+    /* padding: 10px 15px; */
+    background-color: rgb(0, 0, 0); /* 버튼 배경을 검정색으로 설정 */
+    color: rgb(255, 255, 255); /* 텍스트를 흰색으로 설정 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #add-category:hover {
+    background-color: #555; /* 호버 시 더 밝은 검정색으로 변경 */
+  }
+  .step-selector {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .step {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+  }
+        
+      
+
+  .step:hover {
+    background-color: #f1f1f1;
+  }
+
+  .step[style*="background-color: #007bff"] {
+    color: #fff;
+  }
+    .circle-selector {
+    display: flex; /* 원형 객체를 가로로 배치 */
+    gap: 10px; /* 원형 사이 간격 */
+    justify-content: center;
+    align-items: center;
+  }
+
+  .circle {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff;
+    user-select: none;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .circle:hover {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .circle.selected {
+    background-color: yellow; /* 선택된 상태 배경색 */
+    color: black; /* 선택된 상태 글자색 */
+  }
+
+  body {
+    font-family: 'Roboto',"Nanum Gothic",'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #F5F5F7;
+      padding: 20px;
+  }
+  .container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      /* flex-wrap: wrap; */
+  }
+  .box {
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      width: 250px;
+      height: 150px;
+      display: flex;
+      /* flex-direction: column; */
+      align-items: center;
+      background-color: #d9eaff;
+  }
+  .box.green {
+      background-color: #d4f7d4;
+  }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .input-container {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .circle-container {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .circle {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #007bff;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            color: #007bff;
+            cursor: pointer;
+        }
+        .circle.selected {
+            background-color: yellow;
+            color: black;
+        }
+        .post-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .post-box {
+        width: 400px;
+        border: 1px solid #BDC3C7 ;
+        border-radius: 10px;
+        padding: 15px;
+        background-color: #ECF0F1;
+        color : #2C3E50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .post-box.green {
+        background-color: #d4f7d4;
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .post-category {
+        font-weight: bold;
+    }
+
+    .post-content {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .post-title {
+        width: 380px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        color : #27AE60;
+        background-color: #FFFFFF;
+        font-weight: bold;
+        align-items: center;
+        text-align: center;
+    }
+    .thumbnail {
+    width: 400px; /* 섬네일 너비 고정 */
+    height: 200px; /* 섬네일 높이 고정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid #ddd; /* 테두리 추가 */
+    border-radius: 5px; /* 둥근 테두리 */
+    background-color: #f9f9f9; /* 배경색 설정 */
+  }
+
+  .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit:scale-down; /* 이미지 비율 유지하며 영역 채우기 */
+  }
+  .content-button {
+    background-color: #1ABC9C; /* 배경색 빨간색 */
+    color: white; /* 글자색 흰색 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 둥근 테두리 */
+    padding: 10px 20px; /* 버튼 내부 여백 */
+    cursor: pointer; /* 커서 포인터 표시 */
+  }
+
+  .content-button:hover {
+    background-color: #16A085 ; /* 호버 시 더 어두운 빨간색 */
+  }
+
+  .code-button {
+    background-color: #1ABC9C; /* 배경색 초록색 */
+    color: white; /* 글자색 흰색 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 둥근 테두리 */
+    padding: 10px 20px; /* 버튼 내부 여백 */
+    cursor: pointer; /* 커서 포인터 표시 */
+  }
+
+  .code-button:hover {
+    background-color: #16A085; /* 호버 시 더 어두운 초록색 */
+  }
+
+  .commu{
+    padding-top: 10px;
+  }
+
+  
+
+
+      
+    </style>
+  </head>
+  <body>
+    <header>
+    </header>
+
+    <div class="categories1-wrapper">
+      <div class="categories1">
+          <button onclick="location.href='/abs'">전체</button>
+          {% for category1 in categories1 %}
+          <button onclick="location.href='/abs?category1={{ category1 }}'">
+              {{ category1 }}
+          </button>
+          {% endfor %}
+      </div>
+      <button class="write-button" onclick="showEditor()">글쓰기</button>
+  </div>
+  
+  <class class="container">
+      <!-- 왼쪽 카테고리2 메뉴 -->
+      <div class="categories2">
+          {% if current_category1 %}
+          <button onclick="location.href='/abs?category1={{ current_category1 }}'">전체</button>
+          {% for category2 in categories2 %}
+          <button onclick="location.href='/abs?category1={{ current_category1 }}&category2={{ category2 }}'">
+              {{ category2 }}
+          </button>
+          {% endfor %}
+          {% else %}
+          <p>카테고리2 없음</p>
+          {% endif %}
+      </div>
+      <div id="list-view" class="posts active">
+        <div class="post-container">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="post-box {% if post[4] == 'VANTAGE' %}green{% endif %}" data-step="{{ post[6] }}" 
+                onclick="location.href='/post/{{ post[0] }}?show_code=false&category1={{ current_category1 }}&category2={{ current_category2 }}&page={{ current_page }}'">
+                    <div class="post-header">
+                        <span class="post-category">{{ post[4] }}-{{ post[5] }}</span>
+                        <span class="post-author">{{ post[3] }}</span>
+                    </div>
+                    <div class="post-content">
+                        <input type="text" class="post-title" value="{{ post[1] }}" readonly>
+                    </div>
+                    <div class="thumbnail">
+                        {% if post[6] and 'data:image' in post[6] %}
+                            <img src="{{ post[6] | regex_search('data:image[^"]+') | first }}" alt="섬네일" style="width: 100%; height: auto;">
+                        {% elif post[7] and 'data:image' in post[7] %}
+                            <img src="{{ post[7] | regex_search('data:image[^"]+') | first }}" alt="섬네일" style="width: 100%; height: auto;">
+                        {% else %}
+                            <span>섬네일 없음</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #777;">검색 결과가 없습니다.</p>
+            {% endif %}
+        </div>
+        <div id="pagination" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+            <!-- 페이지 버튼은 서버에서 동적으로 생성 -->
+        </div>
+   
+    
+        <div id="search-container" style="text-align: center; margin-bottom: 20px;">
+          <form action="/abs" method="GET" style="display: inline-flex; align-items: center; padding: 5px;">
+              <input 
+                  type="text" 
+                  name="query" 
+                  placeholder="검색어를 입력하세요 (제목+내용)" 
+                  value="{{ query|default('') }}" 
+                  style="padding: 5px; width: 300px; height: 30px; border: 1px solid #ddd; border-radius: 4px;"
+              />
+              <button 
+                  type="submit" 
+                  style="padding: 5px;  width: 50px; height: 40px; background-color:  #1ABC9C; color: white; border: none; border-radius: 4px; cursor: pointer;"
+              >
+                  검색
+              </button>
+          </form>
+      </div>
+      
+
+
+        
+        <!-- <div id="iframe-container" style="display: none; margin-top: 20px;"> -->
+          <!-- <iframe id="iframe" src="http://127.0.0.1:5000" style="width: 100%; height: 500px; border: none;"></iframe> -->
+        <!-- </div> -->
+      </div>
+    
+      <!-- 글쓰기 에디터 -->
+      <div id="editor-container">
+        <form action="/submit" method="POST">
+          <div id="cate" style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+            <label for="category1">설비군:</label>
+            <select id="category1" name="category1" required>
+              <option value="">-- 선택 --</option>
+              {% for category in category1_list %}
+                  <option value="{{ category }}" {% if category1 == category %}selected{% endif %}>
+                      {{ category }}
+                  </option>
+              {% endfor %}
+          </select>
+            <!-- <select id="category1" name="category1" required>
+              <option value="">-- 선택 --</option>
+              <option value="CENTURA" {% if category1 == "CENTURA" %}selected{% endif %}>CENTURA</option>
+              <option value="VANTAGE" {% if category1 == "VANTAGE" %}selected{% endif %}>VANTAGE</option>
+              <option value="FTP" {% if category1 == "FTP" %}selected{% endif %}>FTP</option>
+              <option value="LSA" {% if category1 == "LSA" %}selected{% endif %}>LSA</option>
+              <option value="HPA" {% if category1 == "HPA" %}selected{% endif %}>HPA</option>
+              <option value="문의" {% if category1 == "문의" %}selected{% endif %}>문의</option>
+            </select> -->
+            <label for="category2" style="margin-left: 15px;">모듈:</label>
+            <!-- Category2 Dropdown -->
+            <select id="category2" name="category2" required>
+              <option value="">-- 선택 --</option>
+              {% for option in category2_list %}
+                  <option value="{{ option }}" {% if category2 == option %}selected{% endif %}>
+                      {{ option }}
+                  </option>
+              {% endfor %}
+            </select>
+            <button id="add-category"  type="button"  style="margin-left: 10px;">카테고리 추가</button>
+            <!-- <select id="category2" name="category2" required>
+              <option value="">-- 선택 --</option>
+              {% if category1 %}
+              {% for option in category_mapping[category1] %}
+              <option value="{{ option }}" {% if category2 == option %}selected{% endif %}>{{ option }}</option>
+              {% endfor %}
+              {% endif %}      
+            </select> -->
+          </div>
+          <div id="category-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ddd; border-radius: 5px; z-index: 1000;">
+            <h3>새 카테고리 추가</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+              <label for="new-category1" style="flex: 1; text-align: right; margin-right: 10px;">설비군:</label>
+              <input type="text" id="new-category1" style="flex: 2;" placeholder="새 설비군 입력" />
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+              <label for="new-category2" style="flex: 1; text-align: right; margin-right: 10px;">모듈:</label>
+              <input type="text" id="new-category2" style="flex: 2;" placeholder="새 모듈 입력" />
+            </div>
+            <div style="text-align: right;">
+              <button id="save-category" type="button"style="margin-right: 10px;">저장</button>
+              <button id="cancel-category" type="button">취소</button>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+            <button type="submit">저장</button>
+            <button type="button" id="cancel-button">취소</button>
+        </div>
+            <!-- <button type="submit">저장</button> -->
+          
+          </div>
+          
+          <p style="margin-top: 10px; font-size: 12px; color: #777;">
+            애매하면 ETC로 설정하세요. 카테고리 추가 가능합니다.
+          </p>
+          <label for="title">제목:</label>
+          <input type="text" id="title" name="title" required />
+          <br />
+    
+          <label for="content">내용:</label>
+          <textarea id="editor" name="content"></textarea>
+          <br />
+    
+          <!-- <button type="submit">저장</button> -->
+        </form>
+      
+    </div>
+    <script>
+       // 초기 렌더링 시 서버에서 전달받은 값으로 호출
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentPage = {{ current_page }};
+        const totalPages = {{ total_pages }};
+        renderPagination(currentPage, totalPages);
+      });
+      function cancelEditing() {
+  // 에디터를 숨기고 목록 보기를 다시 표시
+  document.getElementById("editor-container").style.display = "none";
+  document.getElementById("list-view").style.display = "block";
+}
+      // 모든 .box 요소를 선택
+    const postBoxes = document.querySelectorAll(".post-box");
+
+// 각 .box에 클릭 이벤트 추가
+
+    function toggleIframe() {
+      const iframeContainer = document.getElementById("iframe-container");
+      const postTable = document.getElementById("post-table");
+      const isIframeVisible = iframeContainer.style.display === "block";
+
+      // Toggle iframe visibility
+      iframeContainer.style.display = isIframeVisible ? "none" : "block";
+      // Hide table when iframe is visible
+      postTable.style.display = isIframeVisible ? "table" : "none";
+  }
+      const categoryMapping = {{ category_mapping|tojson }};
+      const category1Select = document.getElementById("category1");
+      const category2Select = document.getElementById("category2");
+
+      // Populate category2 based on category1
+      category1Select.addEventListener("change", function () {
+        const selectedCategory1 = this.value;
+        category2Select.innerHTML = '<option value="">-- 선택 --</option>'; // 기본 옵션
+
+        if (selectedCategory1 && categoryMapping[selectedCategory1]) {
+          // 중복 제거
+          const uniqueCategory2 = [...new Set(categoryMapping[selectedCategory1])]; // Set으로 변환 후 배열로 재변환
+
+          uniqueCategory2.forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            category2Select.appendChild(option);
+          });
+        }
+      });
+      const addCategoryButton = document.getElementById('add-category');
+      const categoryPopup = document.getElementById('category-popup');
+      const saveCategoryButton = document.getElementById('save-category');
+      const cancelCategoryButton = document.getElementById('cancel-category');
+      addCategoryButton.addEventListener('click', () => {
+    categoryPopup.style.display = 'block';
+  });
+
+  cancelCategoryButton.addEventListener('click', () => {
+    categoryPopup.style.display = 'none';
+  });
+
+  // 새 카테고리 저장
+  saveCategoryButton.addEventListener('click', () => {
+    const newCategory1 = document.getElementById('new-category1').value.trim();
+    const newCategory2 = document.getElementById('new-category2').value.trim();
+    const category1Select = document.getElementById('category1');
+    const category2Select = document.getElementById('category2');
+
+    if (newCategory1 && newCategory2) {
+      // 카테고리1에 새 값 추가
+      let exists = Array.from(category1Select.options).some(option => option.value === newCategory1);
+      if (!exists) {
+        const option1 = document.createElement('option');
+        option1.value = newCategory1;
+        option1.textContent = newCategory1;
+        category1Select.appendChild(option1);
+      }
+
+      // 카테고리2에 새 값 추가
+      exists = Array.from(category2Select.options).some(option => option.value === newCategory2);
+      if (!exists) {
+        const option2 = document.createElement('option');
+        option2.value = newCategory2;
+        option2.textContent = newCategory2;
+        category2Select.appendChild(option2);
+      }
+
+      // 입력값을 현재 선택값으로 설정
+      category1Select.value = newCategory1;
+      category2Select.value = newCategory2;
+      function toggleIframe() {
+      const iframeContainer = document.getElementById("iframe-container");
+      const postTable = document.getElementById("post-table");
+      const isIframeVisible = iframeContainer.style.display === "block";
+
+      // Toggle iframe visibility
+      iframeContainer.style.display = isIframeVisible ? "none" : "block";
+      // Hide table when iframe is visible
+      postTable.style.display = isIframeVisible ? "table" : "none";
+      }// 팝업 닫기
+      categoryPopup.style.display = 'none';
+
+      // 입력 필드 초기화
+      document.getElementById('new-category1').value = '';
+      document.getElementById('new-category2').value = '';
+      } else {
+      alert('설비군과 모듈을 모두 입력해주세요.');
+      }
+      });
+
+      const editor = new Jodit("#editor", {
+        cleanPaste: false,
+        askBeforePasteHTML: false,
+        askBeforePasteFromWord: false,
+        defaultActionOnPaste: "insert_as_text", // 텍스트로 붙여넣기
+        enter: "P", // 줄바꿈을 P 태그로 처리
+        uploader: {
+          insertImageAsBase64URI: true,
+        },
+        buttons: [
+          "bold",
+          "italic",
+          "underline",
+          "strikethrough",
+          "|",
+          "fontsize", // font 버튼 제거
+          "textColor",
+          "backgroundColor",
+          "|",
+          "file",
+          "image",
+          "link",
+          "|",
+          "alignLeft",
+          "alignCenter",
+          "alignRight",
+          "alignJustify",
+          "|",
+          "hr",
+          "table",
+          "|",
+          "undo",
+          "redo",
+          "|",
+          "fullsize",
+          "source",
+        ],
+        removeButtons: ["font"], // font 버튼 제거
+        styleValues: {
+          fontFamily: "Helvetica", // 기본 폰트를 Helvetica로 고정
+        },
+        defaultStyle: "font-family: Helvetica;", // 기본 폰트 설정
+        controls: {
+          textColor: {
+            iconURL: "/static/icon/textcolor.jpg", // 텍스트 색상 아이콘
+            popup: (editor, current, control, close) => {
+              const brushPopup = editor.options.controls.brush.popup(
+                editor,
+                current,
+                control,
+                close
+              );
+              // Text 탭 기본 활성화
+              const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+              if (tabs.length > 1) {
+                tabs[1].click(); // "Text" 탭 활성화
+              }
+              return brushPopup;
+            },
+            exec: (editor, event, control, close) => {
+              const value = editor.options.controls.brush.exec(
+                editor,
+                event,
+                control,
+                close
+              );
+              editor.s.applyStyle({ color: value });
+              return value;
+            },
+            tooltip: "텍스트 색상 변경",
+          },
+          backgroundColor: {
+            iconURL: "/static/icon/backcolor.jpg", // 배경 색상 아이콘
+            popup: (editor, current, control, close) => {
+              const brushPopup = editor.options.controls.brush.popup(
+                editor,
+                current,
+                control,
+                close
+              );
+
+              // Background 탭 기본 활성화
+              const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+              if (tabs.length > 0) {
+                tabs[0].click(); // "Background" 탭 활성화
+              }
+              return brushPopup;
+            },
+            exec: (editor, event, control, close) => {
+              const value = editor.options.controls.brush.exec(
+                editor,
+                event,
+                control,
+                close
+              );
+              editor.s.applyStyle({ backgroundColor: value });
+              return value;
+            },
+            tooltip: "배경 색상 변경",
+          },
+          alignLeft: {
+            icon: "left",
+            exec: (editor) => editor.execCommand("justifyLeft"),
+            tooltip: "왼쪽 정렬",
+          },
+          alignCenter: {
+            icon: "center",
+            exec: (editor) => editor.execCommand("justifyCenter"),
+            tooltip: "가운데 정렬",
+          },
+          alignRight: {
+            icon: "right",
+            exec: (editor) => editor.execCommand("justifyRight"),
+            tooltip: "오른쪽 정렬",
+          },
+          alignJustify: {
+            icon: "justify",
+            exec: (editor) => editor.execCommand("justifyFull"),
+            tooltip: "양쪽 정렬",
+          },
+          fontsize: {
+            icon: "fontsiz22e",
+            exec: (editor) => editor.execCommand("fontsize"),
+            tooltip: "글자 크기",
+          },
+        },
+        events: {
+          afterInsertNode: (node) => {
+            if (node.tagName === "TABLE") {
+              // 기본 스타일 적용
+              node.style.border = "1px solid black";
+              node.style.borderCollapse = "collapse";
+              node.style.tableLayout = "auto"; // 텍스트 내용에 따라 셀 크기 자동 조정
+
+              // 셀 스타일
+              Array.from(node.querySelectorAll("td, th")).forEach((cell) => {
+                cell.style.border = "1px solid black";
+                cell.style.padding = "8px";
+                cell.style.textAlign = "left";
+              });
+            }
+          },
+        },
+
+        height: 700, // 에디터 높이를 700px로 설정
+        width: "100%", // 부모 컨테이너의 100%에 맞춤
+        toolbarAdaptive: false, // 메뉴 축약 비활성화
+        toolbarSticky: true, // 툴바 고정
+      });
+      editor.events.on('paste', (event) => {
+        if (clipboardData) {
+        const htmlData = clipboardData.getData('text/html'); // HTML 데이터 가져오기
+        const textData = clipboardData.getData('text'); // 텍스트 데이터 가져오기
+
+        // 기본 동작 차단
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (htmlData) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlData, 'text/html');
+            const table = doc.querySelector('table'); // 붙여넣기 데이터에서 첫 번째 <table> 태그 추출
+
+            if (table) {
+                // 클론 노드로 표 데이터만 추출
+                const cleanTable = table.cloneNode(true);
+
+                // 표 스타일 설정: 셀 길이에 따라 전체 길이 조정
+                cleanTable.style.border = "1px solid black";
+                cleanTable.style.borderCollapse = "collapse";
+                cleanTable.style.width = "auto"; // 표 너비를 내용에 따라 자동 조정
+                cleanTable.style.tableLayout = "auto"; // 셀 길이에 따라 표 크기 자동 조정
+
+                // 각 셀 스타일 설정
+                Array.from(cleanTable.querySelectorAll("td, th")).forEach((cell) => {
+                    cell.style.border = "1px solid black";
+                    cell.style.padding = "8px";
+                    cell.style.textAlign = "left"; // 텍스트 정렬
+                    cell.style.wordBreak = "break-word"; // 긴 단어 줄바꿈
+                    cell.style.whiteSpace = "nowrap"; // 텍스트가 줄바꿈되지 않도록 설정
+                });
+
+                // 최종 클린 테이블 삽입
+                editor.selection.insertHTML(cleanTable.outerHTML);
+                return;
+            } else {
+                // HTML 데이터 전체 삽입
+                editor.selection.insertHTML(doc.body.innerHTML);
+                return;
+            }
+        }
+
+        if (textData) {
+            // HTML 데이터가 없을 경우 텍스트 데이터의 줄바꿈 처리
+            const formattedText = textData.replace(/\n/g, "<br>");
+            editor.selection.insertHTML(formattedText);
+        }}
+      });
+      function showEditor() {
+        const category1 = "{{ current_category1 }}";
+        const category2 = "{{ current_category2 }}";
+      
+        document.getElementById("list-view").style.display = "none";
+        document.getElementById("editor-container").style.display = "block";
+      
+        // category1과 category2를 설정
+        const category1Select = document.getElementById("category1");
+        const category2Select = document.getElementById("category2");
+      
+        category1Select.value = category1;
+        category2Select.value = category2;
+
+        // const category2 = document.getElementById("category2");
+        const selectedCategory1 = this.value;
+
+        // Clear existing options
+        category2.innerHTML = '<option value="">-- 선택 --</option>';
+
+        // Populate category2 options based on category1
+        if (selectedCategory1 && categoryMapping[selectedCategory1]) {
+          categoryMapping[selectedCategory1].forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            category2.appendChild(option);
+          });
+        }
+      };
+        // category1 변경 시 category2 옵션 업데이트
+        // category2Select.innerHTML = '<option value="">-- 선택 --</option>';
+        // if (category1 && categoryMapping[category1]) {
+        //   categoryMapping[category1].forEach(function (item) {
+        //     const option = document.createElement("option");
+        //     option.value = item;
+        //     option.textContent = item;
+        //     if (item === category2) {
+        //       option.selected = true;
+        //     }
+        //     category2Select.appendChild(option);
+        //   });
+        // }
+      // 세부 내용을 표시하는 함수
+      function viewDetails(id, title, category1, category2, time, author) {
+        // 세부 내용을 동적으로 설정
+        document.getElementById("detail-title").innerText = title;
+        document.getElementById("detail-category1").innerText = category1;
+        document.getElementById("detail-category2").innerText = category2;
+        document.getElementById("detail-time").innerText = time;
+        document.getElementById("detail-author").innerText = author;
+        document.getElementById("detail-content").innerHTML = "글 내용은 서버에서 가져옵니다.";
+
+        // 목록을 숨기고 세부 내용을 표시
+        document.getElementById("list-view").classList.remove("active");
+        document.getElementById("details-view").classList.add("active");
+      }
+
+      // 목록으로 돌아가는 함수
+      function showList() {
+        // 세부 내용을 숨기고 목록을 다시 표시
+        document.getElementById("details-view").classList.remove("active");
+        document.getElementById("list-view").classList.add("active");
+      }
+      // 페이지 버튼 렌더링
+      function renderPagination(currentPage, totalPages) {
+        const pagination = document.getElementById("pagination");
+        let html = "";
+
+        // 이전 페이지 버튼
+        if (currentPage > 1) {
+          html += `<button onclick="changePage(${currentPage - 1})">이전</button>`;
+        }
+
+        // 페이지 번호 버튼 (1~10 단위)
+        const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+        const endPage = Math.min(startPage + 9, totalPages);
+
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            html += `<button style="font-weight: bold;">${i}</button>`;
+          } else {
+            html += `<button onclick="changePage(${i})">${i}</button>`;
+          }
+        }
+
+        // 다음 페이지 버튼
+        if (currentPage < totalPages) {
+          html += `<button onclick="changePage(${currentPage + 1})">다음</button>`;
+        }
+
+        pagination.innerHTML = html;
+      }
+
+      // 페이지 변경 함수
+      function changePage(page) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("page", page); // 페이지 번호 업데이트
+        window.location.search = params.toString(); // 새 페이지로 이동
+      }
+
+      document.getElementById('cancel-button').addEventListener('click', function () {
+        // 루트 경로로 이동
+        window.location.href = '/';
+    });
+    </script>
+  </body>
+</html>

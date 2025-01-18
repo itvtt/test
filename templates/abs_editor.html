@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시글 작성</title>
+    <link rel="stylesheet" href="/static/jodit/jodit.min.css" />
+    <script src="/static/jodit/jodit.min.js"></script>
+    <style>
+      /* 기본 표 스타일 */
+      table {
+        border-collapse: collapse;
+        table-layout: auto; /* 텍스트 내용에 따라 크기 조정 */
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #000;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #cate {
+        display: flex;
+        justify-content: flex-start; /* 좌우 정렬 */
+        margin-bottom: 10px;
+        align-items: center; /* 세로 정렬 */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>게시글 작성</h1>
+    <form action="/submit" method="POST">
+      <div id="cate">
+        <label for="category1">설비군:</label>
+        <select id="category1" name="category1" required>
+          <option value="">-- 선택 --</option>
+          {% for category in category1_list %}
+              <option value="{{ category }}" {% if category1 == category %}selected{% endif %}>
+                  {{ category }}
+              </option>
+          {% endfor %}
+      </select>
+        <!-- <select id="category1" name="category1" required>
+            <option value="">-- 선택 --</option>
+            <option value="AMAT-CENTURA" {% if category1 == "AMAT-CENTURA" %}selected{% endif %}>AMAT-CENTURA</option>
+            <option value="AMAT-VANTAGE" {% if category1 == "AMAT-VANTAGE" %}selected{% endif %}>AMAT-VANTAGE</option>
+            <option value="FTP" {% if category1 == "FTP" %}selected{% endif %}>FTP</option>
+            <option value="LSA" {% if category1 == "LSA" %}selected{% endif %}>LSA</option>
+            <option value="HPA" {% if category1 == "HPA" %}selected{% endif %}>HPA</option>
+            <option value="문의" {% if category1 == "문의" %}selected{% endif %}>문의</option>
+        </select> -->
+        <label for="category2" style="margin-left: 15px;">모듈:</label>
+        <!-- Category2 Dropdown -->
+        <select id="category2" name="category2" required>
+          <option value="">-- 선택 --</option>
+          {% for option in category2_list %}
+              <option value="{{ option }}" {% if category2 == option %}selected{% endif %}>
+                  {{ option }}
+              </option>
+          {% endfor %}
+        </select>
+        <!-- <select id="category2" name="category2" required>
+            <option value="">-- 선택 --</option>
+            {% if category1 %}
+                {% for option in category_mapping[category1] %}
+                <option value="{{ option }}" {% if category2 == option %}selected{% endif %}>{{ option }}</option>
+                {% endfor %}
+            {% endif %}
+        </select> -->
+        <p style="margin-top: 10px; font-size: 12px; color: #777;">
+            애매하면 ETC로 설정하세요. 카테고리 추가 가능합니다.
+        </p>
+    </div>
+
+      <label for="title">제목:</label>
+      <input type="text" id="title" name="title" required />
+      <br /><br />
+
+      <label for="content">내용:</label>
+      <textarea id="editor" name="content"></textarea>
+      <br /><br />
+      <button type="submit">저장</button>
+    </form>
+    <script>
+      const categoryMapping = {{ category_mapping|tojson }};
+      const category1Select = document.getElementById("category1");
+      const category2Select = document.getElementById("category2");
+
+      // Populate category2 based on category1
+      category1Select.addEventListener("change", function () {
+        const selectedCategory1 = this.value;
+        category2Select.innerHTML = '<option value="">-- 선택 --</option>'; // 기본 옵션
+
+        if (selectedCategory1 && categoryMapping[selectedCategory1]) {
+          // 중복 제거
+          const uniqueCategory2 = [...new Set(categoryMapping[selectedCategory1])]; // Set으로 변환 후 배열로 재변환
+
+          uniqueCategory2.forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            category2Select.appendChild(option);
+          });
+        }
+      });
+      
+      const editor = new Jodit("#editor", {
+        cleanPaste: false,
+        askBeforePasteHTML: false,
+        askBeforePasteFromWord: false,
+        defaultActionOnPaste: "insert_as_text", // 텍스트로 붙여넣기
+        enter: "P", // 줄바꿈을 P 태그로 처리
+        uploader: {
+          insertImageAsBase64URI: true,
+        },
+        buttons: [
+          "bold",
+          "italic",
+          "underline",
+          "strikethrough",
+          "|",
+          "fontsize", // font 버튼 제거
+          "textColor",
+          "backgroundColor",
+          "|",
+          "file",
+          "image",
+          "link",
+          "|",
+          "alignLeft",
+          "alignCenter",
+          "alignRight",
+          "alignJustify",
+          "|",
+          "hr",
+          "table",
+          "|",
+          "undo",
+          "redo",
+          "|",
+          "fullsize",
+          "source",
+        ],
+        removeButtons: ["font"], // font 버튼 제거
+        styleValues: {
+          fontFamily: "Helvetica", // 기본 폰트를 Helvetica로 고정
+        },
+        defaultStyle: "font-family: Helvetica;", // 기본 폰트 설정
+        controls: {
+          textColor: {
+            iconURL: "/static/icon/textcolor.jpg", // 텍스트 색상 아이콘
+            popup: (editor, current, control, close) => {
+              const brushPopup = editor.options.controls.brush.popup(
+                editor,
+                current,
+                control,
+                close
+              );
+              // Text 탭 기본 활성화
+              const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+              if (tabs.length > 1) {
+                tabs[1].click(); // "Text" 탭 활성화
+              }
+              return brushPopup;
+            },
+            exec: (editor, event, control, close) => {
+              const value = editor.options.controls.brush.exec(
+                editor,
+                event,
+                control,
+                close
+              );
+              editor.s.applyStyle({ color: value });
+              return value;
+            },
+            tooltip: "텍스트 색상 변경",
+          },
+          backgroundColor: {
+            iconURL: "/static/icon/backcolor.jpg", // 배경 색상 아이콘
+            popup: (editor, current, control, close) => {
+              const brushPopup = editor.options.controls.brush.popup(
+                editor,
+                current,
+                control,
+                close
+              );
+
+              // Background 탭 기본 활성화
+              const tabs = brushPopup.querySelectorAll(".jodit-tabs__button");
+              if (tabs.length > 0) {
+                tabs[0].click(); // "Background" 탭 활성화
+              }
+              return brushPopup;
+            },
+            exec: (editor, event, control, close) => {
+              const value = editor.options.controls.brush.exec(
+                editor,
+                event,
+                control,
+                close
+              );
+              editor.s.applyStyle({ backgroundColor: value });
+              return value;
+            },
+            tooltip: "배경 색상 변경",
+          },
+          alignLeft: {
+            icon: "left",
+            exec: (editor) => editor.execCommand("justifyLeft"),
+            tooltip: "왼쪽 정렬",
+          },
+          alignCenter: {
+            icon: "center",
+            exec: (editor) => editor.execCommand("justifyCenter"),
+            tooltip: "가운데 정렬",
+          },
+          alignRight: {
+            icon: "right",
+            exec: (editor) => editor.execCommand("justifyRight"),
+            tooltip: "오른쪽 정렬",
+          },
+          alignJustify: {
+            icon: "justify",
+            exec: (editor) => editor.execCommand("justifyFull"),
+            tooltip: "양쪽 정렬",
+          },
+          fontsize: {
+            icon: "fontsiz22e",
+            exec: (editor) => editor.execCommand("fontsize"),
+            tooltip: "글자 크기",
+          },
+        },
+        events: {
+          afterInsertNode: (node) => {
+            if (node.tagName === "TABLE") {
+              // 기본 스타일 적용
+              node.style.border = "1px solid black";
+              node.style.borderCollapse = "collapse";
+              node.style.tableLayout = "auto"; // 텍스트 내용에 따라 셀 크기 자동 조정
+
+              // 셀 스타일
+              Array.from(node.querySelectorAll("td, th")).forEach((cell) => {
+                cell.style.border = "1px solid black";
+                cell.style.padding = "8px";
+                cell.style.textAlign = "left";
+              });
+            }
+          },
+        },
+
+        height: 700, // 에디터 높이를 700px로 설정
+        width: "100%", // 부모 컨테이너의 100%에 맞춤
+        toolbarAdaptive: false, // 메뉴 축약 비활성화
+        toolbarSticky: true, // 툴바 고정
+      });
+      
+
+    </script>
+  </body>
+</html>
