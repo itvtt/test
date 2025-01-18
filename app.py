@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory
-import pymysql
 from datetime import datetime, timedelta
 import pytz
 import requests
