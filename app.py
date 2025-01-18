@@ -305,7 +305,7 @@ def submit():
     content = request.form["content"]
     category1 = request.form["category1"]
     category2 = request.form["category2"]
-    author = os.getlogin()  # 현재 Windows 사용자 이름 가져오기
+    author = username # 현재 Windows 사용자 이름 가져오기
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -685,7 +685,7 @@ def delete_post(post_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     deleted_at = datetime.now()  # 현재 시간
-    deleted_by = os.getlogin()  # 현재 시스템 사용자 이름
+    deleted_by = username # 현재 시스템 사용자 이름
 
     cursor.execute("""
         UPDATE code_posts
