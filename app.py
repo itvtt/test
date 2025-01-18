@@ -139,9 +139,6 @@ def homes():
 
 
 
-username = os.getlogin()  # 현재 Windows 사용자 이름 가져오기
-print(username)
-
 @app.route("/abs")
 def index():
     query = request.args.get("query", "").strip()  # 검색어 가져오기
