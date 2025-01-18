@@ -59,7 +59,7 @@ def get_category_mapping():
         with connection.cursor() as cursor:
             # SQL 쿼리 실행
             sql = """
-            SELECT category1, GROUP_CONCAT(category2) AS category2_list
+            SELECT category1, STRING_AGG(category2, ',') AS category2_list
             FROM code_posts
             WHERE is_deleted = FALSE
             GROUP BY category1
