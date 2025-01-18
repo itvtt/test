@@ -138,16 +138,6 @@ def homes():
 
 
 
-# MySQL 연결 설정
-db = pymysql.connect(
-    host="localhost",
-    user="root",
-    password="1234",
-    database="imp_db",
-    charset="utf8mb4",
-    autocommit=True  # 자동 커밋 활성화
-)
-
 
 username = os.getlogin()  # 현재 Windows 사용자 이름 가져오기
 print(username)
@@ -168,7 +158,8 @@ def index():
     posts_per_page = 12  # 페이지당 표시할 게시물 수
     offset = (page - 1) * posts_per_page  # OFFSET 계산
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     # 검색 조건 구성
     query_condition = ""
@@ -785,4 +776,3 @@ def delete_reply(reply_id):
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8080))
     app.run(host="0.0.0.0", port=port, debug=True)
-
