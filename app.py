@@ -109,12 +109,10 @@ def get_category_mapping():
     finally:
         connection.close()
 
-
-
 def get_category1_list():
     connection = get_db_connection()
     try:
-        with connection.cursor() as cursor:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             # DISTINCT로 category1만 가져오기
             sql = """
             SELECT DISTINCT category1
@@ -133,7 +131,7 @@ def get_category1_list():
 def get_category2_list(category1):
     connection = get_db_connection()
     try:
-        with connection.cursor() as cursor:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             # 중복 제거를 위한 DISTINCT 쿼리
             sql = """
             SELECT DISTINCT category2
@@ -150,6 +148,46 @@ def get_category2_list(category1):
         return sorted(category2_set)  # 정렬된 리스트 반환
     finally:
         connection.close()
+
+# def get_category1_list():
+#     connection = get_db_connection()
+#     try:
+#         with connection.cursor() as cursor:
+#             # DISTINCT로 category1만 가져오기
+#             sql = """
+#             SELECT DISTINCT category1
+#             FROM code_posts
+#             WHERE is_deleted = FALSE
+#             ORDER BY category1
+#             """
+#             cursor.execute(sql)
+#             result = cursor.fetchall()
+        
+#         # category1 목록 생성
+#         return [row['category1'] for row in result]
+#     finally:
+#         connection.close()
+
+# def get_category2_list(category1):
+#     connection = get_db_connection()
+#     try:
+#         with connection.cursor() as cursor:
+#             # 중복 제거를 위한 DISTINCT 쿼리
+#             sql = """
+#             SELECT DISTINCT category2
+#             FROM code_posts
+#             WHERE category1 = %s
+#             AND is_deleted = FALSE
+#             ORDER BY category2
+#             """
+#             cursor.execute(sql, (category1,))
+#             result = cursor.fetchall()
+
+#         # Python에서 중복 제거
+#         category2_set = set(row['category2'] for row in result)  # Set으로 변환
+#         return sorted(category2_set)  # 정렬된 리스트 반환
+#     finally:
+#         connection.close()
 
 
 
