@@ -102,7 +102,7 @@ def update_event(event_id):
     data = request.json
 
     start = datetime.strptime(data['start'], '%Y-%m-%d').date()
-    end = datetime.strptime(data['end'], '%Y-%m-%d').date()
+    end = datetime.strptime(data['endd'], '%Y-%m-%d').date()
     end += timedelta(days=1)  # 종료 날짜 포함되도록 조정
     cate = data.get('cate', '기타')
     text = data.get('text', '')
