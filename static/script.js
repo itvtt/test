@@ -3,7 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const contentSection = document.getElementById("dynamic-content");
     const searchBox = document.querySelector(".search-box input");
     const iframe = document.getElementById("dynamic-iframe");
-
+    let observer;
+    let currentUrl = ""; 
     // 새로고침 여부 확인 및 처리
     const savedIframeSrc = localStorage.getItem("currentIframeSrc");
     const isReload = sessionStorage.getItem("isReload");
@@ -21,37 +22,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // 새로고침 여부 플래그 설정
     sessionStorage.setItem("isReload", "true");
 
-    // iframe 높이 자동 조정 함수
+    // iframe 초기화 함수
+    // iframe 높이 조정 함수
     const adjustIframeHeight = () => {
         if (iframe.contentWindow) {
             const iframeDocument = iframe.contentWindow.document;
             if (iframeDocument && iframeDocument.body) {
-                // 로드된 콘텐츠의 높이를 계산하고 iframe 높이에 반영
-                const contentHeight = iframeDocument.body.scrollHeight+200;
-                iframe.style.height = contentHeight + "px";
+                const visibleElements = Array.from(iframeDocument.body.children).filter((child) => {
+                    const style = window.getComputedStyle(child);
+                    return style.display !== "none" && style.visibility !== "hidden";
+                });
+
+                const visibleHeight = visibleElements.reduce((total, element) => total + element.offsetHeight, 0);
+
+                iframe.style.height = `${visibleHeight+50}px`; // 안전 여백 추가
             }
         }
     };
 
-    // iframe 내부 변경 감지 함수
-    const observeIframeChanges = () => {
-        if (iframe.contentWindow) {
-            const iframeDocument = iframe.contentWindow.document;
-            if (iframeDocument) {
-                const observer = new MutationObserver(() => {
-                    adjustIframeHeight(); // 콘텐츠 변경 시 높이 재조정
-                });
+    // iframe 초기화 함수
+    const resetIframe = (url) => {
+        // if (currentUrl === url) {
+        //     // 이미 로드된 URL이면 처리 중단 (중복 클릭 방지)
+        //     return;
+        // }
 
-                observer.observe(iframeDocument.body, {
-                    childList: true, // 자식 요소 변화 감지
-                    subtree: true,   // 하위 트리 변화 감지
-                    attributes: true // 속성 변화 감지
-                });
-            }
-        }
+        // URL 업데이트 및 높이 초기화
+        currentUrl = url;
+        iframe.style.height = "0px"; // 높이 초기화
+        iframe.src = url; // URL 설정
     };
 
-    // iframe 로드 이벤트에서 높이 조정 및 변화 감지 시작
+    // iframe 로드 이벤트에서 높이 조정 및 변화 감지
     iframe.addEventListener("load", () => {
         adjustIframeHeight();
         observeIframeChanges();
@@ -62,73 +64,100 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // iframe 내부 변경 감지 함수
+    const observeIframeChanges = () => {
+        if (iframe.contentWindow) {
+            const iframeDocument = iframe.contentWindow.document;
+            if (iframeDocument) {
+                const observer = new MutationObserver(() => {
+                    adjustIframeHeight(); // DOM 변경 시 높이 재조정
+                });
+
+                observer.observe(iframeDocument.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                });
+            }
+        }
+    };
+
+
     // 메뉴별 아이템 데이터
     const menuItems = {
         "MENU-MEETING": [
-            { img: "https://via.placeholder.com/50", name: "AMAT 회의록", url: "/cal" },
+            { img: "https://via.placeholder.com/50", name: "AMAT 회의록", url: "/abs?table=meet_posts&category1=AMAT회의록" },
             { img: "https://via.placeholder.com/50", name: "FRTP 회의록", url: "/home" },
         ],
         "MENU-MANAGE": [
             { img: "https://via.placeholder.com/50", name: "파츠 대여 관리", url: "/cal" },
             { img: "https://via.placeholder.com/50", name: "FOUP 관리", url: "/home" },
         ],
-        "MENU-CENTURA": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", tag: "New" , url: "/cal"},
+        "MENU-EQP": [
+            { img: "https://via.placeholder.com/50", name: "CENTURA" , url: "/abs?table=posts&category1=CENTURA"},
+            { img: "https://via.placeholder.com/50", name: "VANTAGE" , url: "/abs?category1=VANTAGE"},
+            { img: "https://via.placeholder.com/50", name: "FRTP" , url: "/abs?category1=FRTP"},
+            { img: "https://via.placeholder.com/50", name: "ESCALA" , url: "/abs?category1=ESCALA", tag: "New"},
+            { img: "https://via.placeholder.com/50", name: "LSA" , url: "/abs?category1=LSA"},
+            { img: "https://via.placeholder.com/50", name: "HPA" , url: "/abs?category1=HPA"},
+            { img: "https://via.placeholder.com/50", name: "LOHAS" , url: "/abs?category1=LOHAS", tag: "New"},
+            { img: "https://via.placeholder.com/50", name: "ARGOS" , url: "/abs?category1=ARGOS", tag: "New"},
+            { img: "https://via.placeholder.com/50", name: "VIVA" , url: "/abs?category1=VIVA", tag: "New"},
+            { img: "https://via.placeholder.com/50", name: "SYSTEM" , url: "/abs?category1=SYSTEM"},
+            { img: "https://via.placeholder.com/50", name: "ETC" , url: "/abs?category1=ETC"},
         ],
-        "MENU-VANTAGE": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-FRTP": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-ESCALA": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-LSA": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-HPA": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-LOHAS": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-ARGOS": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-VIVA": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-SYSTEM": [
-            { img: "https://via.placeholder.com/50", name: "ACS" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "BBS", url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "EES" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "DDIFE", url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "EFIJe" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "YMS", url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "IRS" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "DDS", url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "ILE" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        "MENU-ETC": [
-            { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
-            { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
-        ],
-        
+        // "MENU-VANTAGE": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-FRTP": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-ESCALA": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-LSA": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-HPA": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-LOHAS": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-ARGOS": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-VIVA": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-SYSTEM": [
+        //     { img: "https://via.placeholder.com/50", name: "ACS" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "BBS", url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "EES" , url: "/abs?category1=EES"},
+        //     { img: "https://via.placeholder.com/50", name: "DDIFE", url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "EFIJe" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "YMS", url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "IRS" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "DDS", url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "ILE" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
+        // "MENU-ETC": [
+        //     { img: "https://via.placeholder.com/50", name: "EFEM" , url: "/cal"},
+        //     { img: "https://via.placeholder.com/50", name: "LL/TM", url: "/cal"},
+        // ],
     };
-
+ 
     // 드롭다운 렌더링 함수
     const renderDropdown = (menuId) => {
         dropdownContainer.innerHTML = ""; // 기존 내용 제거
@@ -143,28 +172,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${item.name} ${item.tag ? `<span class="tag ${item.tag === "New" ? "new" : ""}">${item.tag}</span>` : ""}</p>
                 `;
                 dropdownContainer.appendChild(div);
-
+    
                 // 순차적 애니메이션 적용
                 setTimeout(() => {
                     div.classList.add("visible");
                 }, index * 10);
-
+    
                 // 클릭 이벤트 추가
                 div.addEventListener("click", () => {
                     const url = div.getAttribute("data-url");
                     if (url) {
-                        iframe.src = url; // 새로운 URL을 iframe에 로드
-                        iframe.style.display = "block"; // iframe 표시
-                        localStorage.setItem("currentIframeSrc", url); // 현재 iframe URL 저장
+                        resetIframe(url); // 전달된 URL로 iframe 초기화
+                        dropdownContainer.classList.remove("show");
                     }
-                    dropdownContainer.classList.remove("show"); 
                 });
             });
             const closeButton = document.createElement("div");
             closeButton.className = "close-btn";
             closeButton.innerHTML = "X";
             dropdownContainer.appendChild(closeButton);
-
+    
             // X 버튼 클릭 이벤트
             closeButton.addEventListener("click", () => {
                 dropdownContainer.classList.remove("show"); // 드롭다운 닫기
@@ -194,6 +221,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 dropdownContainer.classList.remove("show"); // 드롭다운 닫기
                 return;
             }
+            // if (menuId === "MENU-EQP") {
+            //     // MENU-EQP 클릭 시 드롭다운 열고 /abs로 이동
+            //     iframe.src = "/abs"; // /abs로 이동
+            //     iframe.style.display = "block"; // iframe 표시
+            //     localStorage.setItem("currentIframeSrc", "/abs"); // 현재 URL 저장
+            // }
+
 
             // 드롭다운이 열려있고 동일 메뉴 클릭 시 닫음
             if (dropdownContainer.classList.contains("show") && dropdownContainer.dataset.menu === menuId) {

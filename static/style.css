@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* 전체 페이지를 한 칸으로 설정 */
 html, body {
@@ -9,7 +11,7 @@ html, body {
 }
 /* background: linear-gradient(180deg, #0066cc 0%, #ffffff 100%); */
 #index-container {
-    font-family: 'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Roboto',"Nanum Gothic",'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size:  20px;
     display: flex;
     flex-direction: column;
@@ -28,12 +30,22 @@ html, body {
     justify-content: center;
     gap: 20px;
     font-size: 20px;
-    font-family: 'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Roboto',"Nanum Gothic",'Space Grotesk',"SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", MalgunGothic, "HY Dotum", "Lexi Gulim", "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-decoration: none solid rgba(0, 0, 0, 0.8)
 }
-.tag.new {
+
+
+
+#index-container .tag.new {
+    font-size: 12px;
     color:  #B64400; /* 빨간색으로 표시 */
     font-weight: bold; /* 강조 */
+    position: absolute;
+  bottom: -20px; /* 위치 조정을 위해 아래로 이동 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+
 }
 
 #index-container .menu {
@@ -137,3 +149,4 @@ html, body {
 .close-btn:hover {
     color: rgb(14, 46, 226);
 }
+
